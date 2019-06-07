@@ -9,7 +9,7 @@ ggpiestats(data, main, condition = NULL, counts = NULL, ratio = NULL,
   stat.title = NULL, sample.size.label = TRUE,
   label.separator = "\\n", label.text.size = 4,
   label.fill.color = "white", label.fill.alpha = 1,
-  bf.message = FALSE, sampling.plan = "indepMulti",
+  bf.message = TRUE, sampling.plan = "indepMulti",
   fixed.margin = "rows", prior.concentration = 1, title = NULL,
   subtitle = NULL, caption = NULL, conf.level = 0.95, nboot = 100,
   simulate.p.value = FALSE, B = 2000, legend.title = NULL,
@@ -158,6 +158,8 @@ research which suggests that the Yates' correction is overly conservative,
 even in small sample sizes. As such it is recommended that it should not
 ever be applied in practice (Camilli & Hopkins, 1978, 1979; Feinberg, 1980;
 Larntz, 1978; Thompson, 1988).
+For more about how the effect size measures and their confidence intervals
+are computed, see \code{?rcompanion::cohenG} and \code{?rcompanion::cramerV}.
 }
 \description{
 Pie charts for categorical data with statistical details
@@ -173,7 +175,7 @@ ggstatsplot::ggpiestats(
   data = ggplot2::msleep,
   main = vore,
   perc.k = 1,
-  k = 2
+  k = 3
 )
 
 # simple function call with the defaults (with condition)
@@ -188,7 +190,7 @@ ggstatsplot::ggpiestats(
 )
 
 # simple function call with the defaults (without condition; with count data)
-library(jmv)
+library(jmv, warn.conflicts = FALSE)
 
 ggstatsplot::ggpiestats(
   data = as.data.frame(HairEyeColor),
@@ -198,6 +200,10 @@ ggstatsplot::ggpiestats(
 }
 \references{
 \url{https://indrajeetpatil.github.io/ggstatsplot/articles/web_only/ggpiestats.html}
+}
+\seealso{
+\code{\link{grouped_ggpiestats}}, \code{\link{ggbarstats}},
+\code{\link{grouped_ggbarstats}}
 }
 \author{
 Indrajeet Patil

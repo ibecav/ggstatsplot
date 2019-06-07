@@ -9,7 +9,7 @@ grouped_ggpiestats(data, main, condition = NULL, counts = NULL,
   results.subtitle = TRUE, factor.levels = NULL, stat.title = NULL,
   sample.size.label = TRUE, label.separator = "\\n",
   label.text.size = 4, label.fill.color = "white",
-  label.fill.alpha = 1, bf.message = FALSE,
+  label.fill.alpha = 1, bf.message = TRUE,
   sampling.plan = "indepMulti", fixed.margin = "rows",
   prior.concentration = 1, subtitle = NULL, caption = NULL,
   conf.level = 0.95, nboot = 100, simulate.p.value = FALSE,
@@ -212,6 +212,8 @@ research which suggests that the Yates' correction is overly conservative,
 even in small sample sizes. As such it is recommended that it should not
 ever be applied in practice (Camilli & Hopkins, 1978, 1979; Feinberg, 1980;
 Larntz, 1978; Thompson, 1988).
+For more about how the effect size measures and their confidence intervals
+are computed, see \code{?rcompanion::cohenG} and \code{?rcompanion::cramerV}.
 }
 \description{
 Helper function for \code{ggstatsplot::ggpiestats} to apply this
@@ -253,7 +255,6 @@ ggstatsplot::grouped_ggpiestats(
   main = color,
   condition = clarity,
   grouping.var = cut,
-  bf.message = TRUE,
   sampling.plan = "poisson",
   title.prefix = "Quality",
   slice.label = "both",
@@ -267,7 +268,8 @@ ggstatsplot::grouped_ggpiestats(
 \url{https://indrajeetpatil.github.io/ggstatsplot/articles/web_only/ggpiestats.html}
 }
 \seealso{
-\code{\link{ggpiestats}}
+\code{\link{ggbarstats}}, \code{\link{ggpiestats}},
+\code{\link{grouped_ggbarstats}}
 }
 \author{
 Indrajeet Patil, Chuck Powell

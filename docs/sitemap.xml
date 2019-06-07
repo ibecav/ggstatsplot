@@ -154,9 +154,6 @@
     <loc>https://indrajeetpatil.github.io/ggstatsplot//reference/line_labeller.html</loc>
   </url>
   <url>
-    <loc>https://indrajeetpatil.github.io/ggstatsplot//reference/lm_effsize_standardizer.html</loc>
-  </url>
-  <url>
     <loc>https://indrajeetpatil.github.io/ggstatsplot//reference/long_to_wide_converter.html</loc>
   </url>
   <url>
@@ -281,6 +278,9 @@
   </url>
   <url>
     <loc>https://indrajeetpatil.github.io/ggstatsplot//articles/web_only/combine_plots.html</loc>
+  </url>
+  <url>
+    <loc>https://indrajeetpatil.github.io/ggstatsplot//articles/web_only/faq.html</loc>
   </url>
   <url>
     <loc>https://indrajeetpatil.github.io/ggstatsplot//articles/web_only/gallery.html</loc>

@@ -9,6 +9,18 @@ BREAKING CHANGES
     (`subtitle_kw_nonparametric`), a single function
     `subtitle_anova_nonparametric` handles both of these designs with the
     `paired` argument determining which test is run.
+  - All functions that supported Bayes Factor analysis (`type = "bf"`) will only
+    return BF value and the scale used. Previously, this was a mix of parametric
+    statistics and BF, which was confusing and often times misleading since
+    these two types of analyses relied on different tests.
+  - The default for `bf.message` has been changed from `FALSE` to `TRUE`. This
+    is to make the Bayes Factor analysis more visible to the user.
+    
+MAJOR CHANGES
+
+  - `ggscatterstats` returns only plot (without any statistical details) when
+    the specified model is not linear (i.e., either when `method` argument is
+    not `"lm"` or when `formula` is not `y ~ x`).
 
 NEW FEATURES
 
@@ -22,6 +34,8 @@ NEW FEATURES
   - `ggcoefstats` gains `bf.message` argument to display a caption containing
     results from Bayesian random-effects meta-analysis. It therefore gains a new
     dependency: `metaBMA`.
+  - `ggpiestats` and `ggcatstats` will now display Cramer's *V* as effect size
+    for one-sample proportion tests.
 
 MINOR CHANGES
 

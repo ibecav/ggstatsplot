@@ -13,7 +13,7 @@
 #'
 #' @importFrom dplyr select bind_rows summarize mutate mutate_at mutate_if
 #' @importFrom dplyr group_by n arrange
-#' @importFrom rlang !! enquo quo_name ensym
+#' @importFrom rlang !! enquo quo_name ensym !!!
 #' @importFrom glue glue
 #' @importFrom purrr pmap
 #'
@@ -35,7 +35,6 @@
 #'   x = modality,
 #'   y = score,
 #'   grouping.var = order,
-#'   bf.message = TRUE,
 #'   messages = TRUE
 #' )
 #' @export
@@ -55,7 +54,8 @@ grouped_ggwithinstats <- function(data,
                                   partial = TRUE,
                                   effsize.noncentral = TRUE,
                                   bf.prior = 0.707,
-                                  bf.message = FALSE,
+                                  bf.message = TRUE,
+                                  sphericity.correction = TRUE,
                                   results.subtitle = TRUE,
                                   xlab = NULL,
                                   ylab = NULL,
@@ -99,16 +99,16 @@ grouped_ggwithinstats <- function(data,
   # =================== check user input and prep =========================
 
   # create a list of function call to check
-  param_list <- base::as.list(base::match.call())
+  param_list <- as.list(match.call())
 
   # check that there is a grouping.var
   if (!"grouping.var" %in% names(param_list)) {
-    base::stop("You must specify a grouping variable")
+    stop("You must specify a grouping variable")
   }
 
   # check that conditioning and grouping.var are different
   if (as.character(param_list$x) == as.character(param_list$grouping.var)) {
-    base::message(cat(
+    message(cat(
       crayon::red("\nError: "),
       crayon::blue(
         "Identical variable (",
@@ -117,7 +117,7 @@ grouped_ggwithinstats <- function(data,
       ),
       sep = ""
     ))
-    base::return(base::invisible(param_list$x))
+    return(invisible(param_list$x))
   }
 
   # ensure the grouping variable works quoted or unquoted
@@ -194,6 +194,7 @@ grouped_ggwithinstats <- function(data,
       effsize.noncentral = effsize.noncentral,
       bf.prior = bf.prior,
       bf.message = bf.message,
+      sphericity.correction = sphericity.correction,
       results.subtitle = results.subtitle,
       xlab = xlab,
       ylab = ylab,

@@ -28,8 +28,8 @@
 #' @param effsize.estimate,effsize.LL,effsize.UL The estimated value of the
 #'   effect size, its lower bound, and its upper.
 #' @param k Number of decimal places to display (default: `3`).
-#' @param k.parameter Number of decimal places to display for the parameter
-#'   (default: `0`).
+#' @param k.parameter,k.parameter2 Number of decimal places to display for the
+#'   parameters (default: `0`).
 #' @param n An integer specifying the sample size used for the test.
 #' @inheritParams ggbetweenstats
 #'
@@ -69,13 +69,14 @@ subtitle_template <- function(no.parameters,
                               n,
                               conf.level = 0.95,
                               k = 3L,
-                              k.parameter = 0L) {
+                              k.parameter = 0L,
+                              k.parameter2 = 0L) {
   # ------------------ statistic with 0 degrees of freedom --------------------
 
   if (no.parameters == 0L) {
     # preparing subtitle
     subtitle <-
-      base::substitute(
+      substitute(
         expr =
           paste(
             stat.title,
@@ -101,7 +102,7 @@ subtitle_template <- function(no.parameters,
             " = ",
             n
           ),
-        env = base::list(
+        env = list(
           stat.title = stat.title,
           statistic.text = statistic.text,
           statistic = specify_decimal_p(x = statistic, k = k),
@@ -120,7 +121,7 @@ subtitle_template <- function(no.parameters,
 
     # check if parameter is specified
     if (purrr::is_null(parameter)) {
-      base::stop(base::message(cat(
+      stop(message(cat(
         crayon::red("Error: "),
         crayon::blue(
           "For tests with statistic that have two parameters, \n",
@@ -134,7 +135,7 @@ subtitle_template <- function(no.parameters,
 
     # preparing subtitle
     subtitle <-
-      base::substitute(
+      substitute(
         expr =
           paste(
             stat.title,
@@ -162,7 +163,7 @@ subtitle_template <- function(no.parameters,
             " = ",
             n
           ),
-        env = base::list(
+        env = list(
           stat.title = stat.title,
           statistic.text = statistic.text,
           statistic = specify_decimal_p(x = statistic, k = k),
@@ -182,7 +183,7 @@ subtitle_template <- function(no.parameters,
 
     # check if parameters are specified
     if (purrr::is_null(parameter) || purrr::is_null(parameter2)) {
-      base::stop(base::message(cat(
+      stop(message(cat(
         crayon::red("Error: "),
         crayon::blue(
           "For tests with statistic that have two parameters, \n",
@@ -196,13 +197,13 @@ subtitle_template <- function(no.parameters,
 
     # preparing subtitle
     subtitle <-
-      base::substitute(
+      substitute(
         expr =
           paste(
             stat.title,
             statistic.text,
             "(",
-            parameter,
+            parameter1,
             ",",
             parameter2,
             ") = ",
@@ -226,12 +227,12 @@ subtitle_template <- function(no.parameters,
             " = ",
             n
           ),
-        env = base::list(
+        env = list(
           stat.title = stat.title,
           statistic.text = statistic.text,
           statistic = specify_decimal_p(x = statistic, k = k),
-          parameter = specify_decimal_p(x = parameter, k = 0L),
-          parameter2 = specify_decimal_p(x = parameter2, k = k.parameter),
+          parameter1 = specify_decimal_p(x = parameter, k = k.parameter),
+          parameter2 = specify_decimal_p(x = parameter2, k = k.parameter2),
           p.value = specify_decimal_p(x = p.value, k = k, p.value = TRUE),
           effsize.text = effsize.text,
           effsize.estimate = specify_decimal_p(x = effsize.estimate, k = k),

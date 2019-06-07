@@ -13,10 +13,19 @@
 #'   there are two groups (i.e., in case of a *t*-test). In case of large number
 #'   of data points, it is advisable to set `path.point = FALSE` as these lines
 #'   can overwhelm the plot.
+#' @inheritParams subtitle_anova_parametric
+#'
+#' @seealso \code{\link{grouped_ggbetweenstats}}, \code{\link{ggbetweenstats}},
+#'  \code{\link{grouped_ggwithinstats}}, \code{\link{pairwise_p}}
 #'
 #' @importFrom forcats fct_reorder
 #'
-#' @details **This function is still work in progress.**
+#' @details
+#'
+#'  For more about how the effect size measures (for nonparametric tests) and
+#'  their confidence intervals are computed, see `?rcompanion::wilcoxonPairedR`.
+#'
+#'  For independent measures designs, use `ggbetweenstats`.
 #'
 #' @examples
 #'
@@ -29,7 +38,6 @@
 #'   data = VR_dilemma,
 #'   x = modality,
 #'   y = score,
-#'   bf.message = TRUE,
 #'   xlab = "Presentation modality",
 #'   ylab = "Proportion of utilitarian decisions"
 #' )
@@ -61,7 +69,8 @@ ggwithinstats <- function(data,
                           partial = TRUE,
                           effsize.noncentral = TRUE,
                           bf.prior = 0.707,
-                          bf.message = FALSE,
+                          bf.message = TRUE,
+                          sphericity.correction = TRUE,
                           results.subtitle = TRUE,
                           xlab = NULL,
                           ylab = NULL,
@@ -206,8 +215,8 @@ ggwithinstats <- function(data,
       fill = "white",
       width = 0.2,
       alpha = 0.5,
-      notch = FALSE,
-      notchwidth = 0.1
+      notch = notch,
+      notchwidth = notchwidth
     ) +
     ggplot2::geom_violin(
       mapping = ggplot2::aes(x = x, y = y),
@@ -280,6 +289,7 @@ ggwithinstats <- function(data,
         partial = partial,
         effsize.noncentral = effsize.noncentral,
         var.equal = TRUE,
+        sphericity.correction = sphericity.correction,
         bf.prior = bf.prior,
         tr = tr,
         nboot = nboot,
@@ -415,7 +425,7 @@ ggwithinstats <- function(data,
 
   # ------------------------ annotations and themes -------------------------
 
-  # specifiying annotations and other aesthetic aspects for the plot
+  # specifying annotations and other aesthetic aspects for the plot
   plot <-
     aesthetic_addon(
       plot = plot,

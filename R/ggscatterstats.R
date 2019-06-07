@@ -58,8 +58,7 @@
 #' @importFrom dplyr mutate mutate_at mutate_if
 #' @importFrom rlang !! enquo quo_name parse_expr ensym as_name enexpr
 #' @importFrom ggExtra ggMarginal
-#' @importFrom stats cor.test
-#' @importFrom stats na.omit
+#' @importFrom stats cor.test na.omit
 #' @importFrom ggrepel geom_label_repel
 #' @importFrom tibble as_tibble
 #'
@@ -73,12 +72,12 @@
 #' \itemize{
 #' \item `marginal.type = "densigram"` will work only with the development
 #'   version of `ggExtra` that you can download from `GitHub`:
-#'   `devtools::install_github("daattali/ggExtra")`
+#'   `remotes::install_github("daattali/ggExtra")`.
 #'
 #' \item The plot uses `ggrepel::geom_label_repel` to attempt to keep labels
-#'   from over-lapping to the largest degree possible.  As a consequence plot
-#'   times will slow down massively (and the plot file will grow in size) if you
-#'   have a lot of labels that overlap.
+#' from over-lapping to the largest degree possible.  As a consequence plot
+#' times will slow down massively (and the plot file will grow in size) if you
+#' have a lot of labels that overlap.
 #' }
 #'
 #' @examples
@@ -86,7 +85,7 @@
 #' # to get reproducible results from bootstrapping
 #' set.seed(123)
 #'
-#' # creating dataframe
+#' # creating dataframe with rownames converted to a new column
 #' mtcars_new <- mtcars %>%
 #'   tibble::rownames_to_column(., var = "car") %>%
 #'   tibble::as_tibble(x = .)
@@ -112,7 +111,7 @@ ggscatterstats <- function(data,
                            type = "pearson",
                            conf.level = 0.95,
                            bf.prior = 0.707,
-                           bf.message = FALSE,
+                           bf.message = TRUE,
                            label.var = NULL,
                            label.expression = NULL,
                            xlab = NULL,
@@ -166,6 +165,30 @@ ggscatterstats <- function(data,
     ylab <- rlang::as_name(rlang::ensym(y))
   }
 
+  # check the formula and the method
+  # subtitle statistics is valid only for linear models, so turn off the
+  # analysis if the model is not linear
+  # `method` argument can be a string (`"gam"`) or function (`MASS::rlm`)
+  method_ch <- paste(deparse(method), collapse = "")
+
+  if (as.character(deparse(formula)) != "y ~ x" ||
+    if (class(method) == "function") {
+      method_ch != paste(deparse(lm), collapse = "")
+    } else {
+      method != "lm"
+    }) {
+    # turn off the analysis
+    results.subtitle <- FALSE
+
+    # tell the user
+    message(cat(
+      crayon::red("Warning: "),
+      crayon::blue("The statistical analysis is available only for linear model\n"),
+      crayon::blue("(formula = y ~ x, method = 'lm'). Returning only the plot.\n"),
+      sep = ""
+    ))
+  }
+
   #----------------------- dataframe --------------------------------------
 
   # preparing the dataframe
@@ -199,7 +222,7 @@ ggscatterstats <- function(data,
   #---------------------------- user expression -------------------------
 
   # create a list of function call to check for label.expression
-  param_list <- base::as.list(base::match.call())
+  param_list <- as.list(match.call())
 
   # check labeling variable has been entered
   if ("label.var" %in% names(param_list)) {
@@ -496,13 +519,13 @@ ggscatterstats <- function(data,
         type = marginal.type,
         margins = margins,
         size = marginal.size,
-        xparams = base::list(
+        xparams = list(
           fill = xfill,
           alpha = xalpha,
           size = xsize,
           col = "black"
         ),
-        yparams = base::list(
+        yparams = list(
           fill = yfill,
           alpha = yalpha,
           size = ysize,
@@ -515,7 +538,7 @@ ggscatterstats <- function(data,
   #
   # display warning that this function doesn't produce a ggplot2 object
   if (isTRUE(marginal) && isTRUE(messages)) {
-    base::message(cat(
+    message(cat(
       crayon::red("Warning: "),
       crayon::blue("This plot can't be further modified with `ggplot2` functions.\n"),
       crayon::blue("In case you want a `ggplot` object, set `marginal = FALSE`.\n"),

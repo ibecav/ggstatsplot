@@ -8,13 +8,14 @@ template:
       index_name: ggstatsplot
     bootswatch: lumen
 
-
 development:
   mode: unreleased
 
 authors:
   Indrajeet Patil:
     href: https://sites.google.com/site/indrajeetspatilmorality/
+  Chuck Powell:
+    href: https://ibecav.github.io/
 
 reference:
   - title: Primary functions

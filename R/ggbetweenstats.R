@@ -31,10 +31,11 @@
 #'   argument to make sure that your plot is not uber-cluttered when you have
 #'   multiple groups being compared and scores of pairwise comparisons being
 #'   displayed.
-#' @param bf.prior A number between 0.5 and 2 (default `0.707`), the prior width
-#'   to use in calculating Bayes factors.
+#' @param bf.prior A number between `0.5` and `2` (default `0.707`), the prior
+#'   width to use in calculating Bayes factors.
 #' @param bf.message Logical that decides whether to display Bayes Factor in
-#'   favor of the *null* hypothesis **for parametric test** (Default: `FALSE`).
+#'   favor of the *null* hypothesis. This argument is relevant only **for
+#'   parametric test** (Default: `TRUE`).
 #' @param results.subtitle Decides whether the results of statistical tests are
 #'   to be displayed as a subtitle (Default: `TRUE`). If set to `FALSE`, only
 #'   the plot will be returned.
@@ -114,8 +115,6 @@
 #'
 #' @importFrom dplyr select group_by arrange mutate mutate_at mutate_if
 #' @importFrom ggrepel geom_label_repel
-#' @importFrom WRS2 t1way yuen yuen.effect.ci
-#' @importFrom sjstats eta_sq omega_sq
 #' @importFrom stats na.omit t.test oneway.test
 #' @importFrom rlang enquo quo_name as_name !!
 #' @importFrom ggrepel geom_label_repel
@@ -128,7 +127,6 @@
 #'  \code{\link{grouped_ggwithinstats}}, \code{\link{pairwise_p}}
 #'
 #' @details
-#'
 #' For parametric tests, Welch's ANOVA/*t*-test are used as a default (i.e.,
 #' `var.equal = FALSE`).
 #' References:
@@ -144,10 +142,10 @@
 #'  \item *t*-test: Yuen's test for trimmed means (see `?WRS2::yuen`)
 #'  }
 #'
-#' Variant of this function `ggwithinstats` is currently in progress. You *can*
-#' still use this function just to prepare the **plot** for exploratory data
-#' analysis, but the statistical details displayed in the subtitle will be
-#' incorrect. You can remove them by adding `+ ggplot2::labs(subtitle = NULL)`.
+#'  For more about how the effect size measures (for nonparametric tests) and
+#'  their confidence intervals are computed, see `?rcompanion::wilcoxonR`.
+#'
+#'  For repeated measures designs, use `ggwithinstats`.
 #'
 #' @references
 #' \url{https://indrajeetpatil.github.io/ggstatsplot/articles/web_only/ggbetweenstats.html}
@@ -156,6 +154,7 @@
 #'
 #' # to get reproducible results from bootstrapping
 #' set.seed(123)
+#' library(ggstatsplot)
 #'
 #' # simple function call with the defaults
 #' ggstatsplot::ggbetweenstats(
@@ -163,8 +162,7 @@
 #'   x = am,
 #'   y = mpg,
 #'   title = "Fuel efficiency by type of car transmission",
-#'   caption = "Transmission (0 = automatic, 1 = manual)",
-#'   bf.message = TRUE
+#'   caption = "Transmission (0 = automatic, 1 = manual)"
 #' )
 #' \dontrun{
 #' # more detailed function call
@@ -184,7 +182,7 @@
 #'   nboot = 10,
 #'   ggtheme = ggplot2::theme_grey(),
 #'   ggstatsplot.layer = FALSE,
-#'   bf.message = TRUE
+#'   bf.message = FALSE
 #' )
 #' }
 #' @export
@@ -203,7 +201,7 @@ ggbetweenstats <- function(data,
                            partial = TRUE,
                            effsize.noncentral = TRUE,
                            bf.prior = 0.707,
-                           bf.message = FALSE,
+                           bf.message = TRUE,
                            results.subtitle = TRUE,
                            xlab = NULL,
                            ylab = NULL,

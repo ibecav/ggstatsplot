@@ -248,10 +248,7 @@ testthat::test_that(
       )
 
     # testing overall call
-    testthat::expect_identical(
-      object = using_function1,
-      expected = results1
-    )
+    testthat::expect_identical(using_function1, results1)
   }
 )
 
@@ -379,16 +376,16 @@ testthat::test_that(
   code = {
     testthat::skip_on_cran()
 
-
     # ggstatsplot output
     set.seed(123)
     using_function1 <-
       ggstatsplot::subtitle_anova_parametric(
-        data = iris_long,
+        data = ggstatsplot::iris_long,
         x = condition,
         y = value,
         paired = TRUE,
         nboot = 20,
+        k = 3,
         conf.level = 0.99,
         messages = TRUE
       )
@@ -400,11 +397,11 @@ testthat::test_that(
           NULL,
           italic("F"),
           "(",
-          "3",
+          "1.149",
           ",",
-          "447",
+          "171.217",
           ") = ",
-          "776.32",
+          "776.318",
           ", ",
           italic("p"),
           " = ",
@@ -412,12 +409,12 @@ testthat::test_that(
           ", ",
           omega^2,
           " = ",
-          "0.71",
+          "0.707",
           ", CI"["99%"],
           " [",
-          "0.76",
+          "0.758",
           ", ",
-          "0.82",
+          "0.825",
           "]",
           ", ",
           italic("n"),
@@ -438,25 +435,17 @@ testthat::test_that(
   code = {
     testthat::skip_on_cran()
 
-
-    set.seed(123)
-    library(jmv)
-    data("bugs", package = "jmv")
-
-    # converting to long format
-    data_bugs <- bugs %>%
-      tibble::as_tibble(.) %>%
-      tidyr::gather(., key, value, LDLF:HDHF)
-
     # ggstatsplot output
     set.seed(123)
     using_function1 <-
       ggstatsplot::subtitle_anova_parametric(
-        data = data_bugs,
-        x = key,
-        y = value,
+        data = WRS2::WineTasting,
+        x = Wine,
+        y = Taste,
         paired = TRUE,
         effsize.type = "biased",
+        sphericity.correction = FALSE,
+        k = 4,
         conf.level = 0.99,
         messages = FALSE
       )
@@ -468,29 +457,29 @@ testthat::test_that(
           NULL,
           italic("F"),
           "(",
-          "3",
+          "2",
           ",",
-          "261",
+          "42",
           ") = ",
-          "20.59",
+          "6.2883",
           ", ",
           italic("p"),
           " = ",
-          "< 0.001",
+          "0.0084",
           ", ",
           eta["p"]^2,
           " = ",
-          "0.19",
+          "0.2304",
           ", CI"["99%"],
           " [",
-          "0.09",
+          "0.0020",
           ", ",
-          "0.29",
+          "0.4598",
           "]",
           ", ",
           italic("n"),
           " = ",
-          88L
+          22L
         )
       )
 
@@ -501,13 +490,13 @@ testthat::test_that(
     set.seed(123)
     using_function2 <-
       ggstatsplot::subtitle_anova_parametric(
-        data = data_bugs,
-        x = key,
-        y = value,
+        data = WRS2::WineTasting,
+        x = Wine,
+        y = Taste,
         paired = TRUE,
         effsize.type = "bogus",
         k = 5,
-        conf.level = 0.99,
+        conf.level = 0.90,
         nboot = 15,
         messages = FALSE
       )
@@ -519,29 +508,29 @@ testthat::test_that(
           NULL,
           italic("F"),
           "(",
-          "3",
+          "1.54700",
           ",",
-          "261",
+          "32.48706",
           ") = ",
-          "20.58738",
+          "6.28831",
           ", ",
           italic("p"),
           " = ",
-          "< 0.001",
+          "0.00408",
           ", ",
           omega^2,
           " = ",
-          "0.07869",
-          ", CI"["99%"],
+          "0.01701",
+          ", CI"["90%"],
           " [",
-          "0.06548",
+          "0.03464",
           ", ",
-          "0.23741",
+          "0.28869",
           "]",
           ", ",
           italic("n"),
           " = ",
-          88L
+          22L
         )
       )
 
@@ -558,11 +547,12 @@ testthat::test_that(
     testthat::skip_on_cran()
 
     # ggstatsplot output
-    set.seed(123)
+
     # fake a data entry mistake
     iris_long[5, 3] <- "Sepal.Width"
 
     # sample size should be different
+    set.seed(123)
     using_function1 <- ggstatsplot::subtitle_anova_parametric(
       data = iris_long,
       x = condition,
@@ -580,9 +570,9 @@ testthat::test_that(
         NULL,
         italic("F"),
         "(",
-        "3",
+        "1.28",
         ",",
-        "444",
+        "189.93",
         ") = ",
         "686.64",
         ", ",
