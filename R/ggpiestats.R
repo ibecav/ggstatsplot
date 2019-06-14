@@ -63,8 +63,10 @@
 #'   even in small sample sizes. As such it is recommended that it should not
 #'   ever be applied in practice (Camilli & Hopkins, 1978, 1979; Feinberg, 1980;
 #'   Larntz, 1978; Thompson, 1988).
+#'
 #'   For more about how the effect size measures and their confidence intervals
-#'   are computed, see `?rcompanion::cohenG` and `?rcompanion::cramerV`.
+#'   are computed, see `?rcompanion::cohenG`, `?rcompanion::cramerV`, and
+#'   `?rcompanion::cramerVFit`.
 #'
 #' @examples
 #'
@@ -138,6 +140,7 @@ ggpiestats <- function(data,
                        palette = "Dark2",
                        direction = 1,
                        ggplot.component = NULL,
+                       return = "plot",
                        messages = TRUE) {
 
   # ================= extracting column names as labels  =====================
@@ -450,10 +453,13 @@ ggpiestats <- function(data,
         data = data,
         main = main,
         conf.level = conf.level,
+        conf.type = "norm",
+        nboot = nboot,
         ratio = ratio,
         stat.title = stat.title,
         legend.title = legend.title,
-        k = k
+        k = k,
+        messages = messages
       )
     }
   }
@@ -479,5 +485,11 @@ ggpiestats <- function(data,
   p <- p + ggplot.component
 
   # return the final plot
-  return(p)
+  return(switch(
+    EXPR = return,
+    "plot" = p,
+    "subtitle" = subtitle,
+    "caption" = caption,
+    p
+  ))
 }
