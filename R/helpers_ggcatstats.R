@@ -20,10 +20,8 @@
 #'
 #' @importFrom dplyr mutate
 #' @importFrom rlang !! :=
-#' @importFrom stats pchisq
 #'
 #' @examples
-#' \dontrun{
 #'
 #' # dataframe with label column
 #' ggstatsplot:::cat_label_df(
@@ -32,8 +30,6 @@
 #'   label.content = "both",
 #'   perc.k = 1
 #' )
-#' }
-#'
 #' @keywords internal
 
 # function body
@@ -121,4 +117,3 @@ cat_counter <- function(data, main, condition = NULL, ...) {
   # return the final dataframe
   return(df)
 }
-

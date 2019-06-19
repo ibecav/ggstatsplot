@@ -277,12 +277,13 @@ ggstatsplot::ggbetweenstats(
   title = "Fuel efficiency by type of car transmission",
   caption = "Transmission (0 = automatic, 1 = manual)"
 )
-\dontrun{
+\donttest{
 # more detailed function call
 ggstatsplot::ggbetweenstats(
   data = datasets::morley,
   x = Expt,
   y = Speed,
+  type = "np",
   plot.type = "box",
   conf.level = 0.99,
   xlab = "The experiment number",

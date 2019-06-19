@@ -27,11 +27,15 @@
 #'
 #' @importFrom tibble tribble as_tibble
 #' @importFrom tidyr uncount drop_na
-#' @importFrom jmv propTestN contTables
+#' @importFrom jmv propTestN
 #' @importFrom stats mcnemar.test chisq.test
 #' @importFrom rcompanion cramerV cohenG
 #'
 #' @seealso \code{\link{ggpiestats}}
+#'
+#' @details For more details about how the effect sizes and their confidence
+#'   intervals were computed, see documentation in `?rcompanion::cramerV` and
+#'   `?rcompanion::cohenG`.
 #'
 #' @examples
 #'
@@ -226,7 +230,7 @@ subtitle_contingency_tab <- function(data,
       dplyr::filter(.data = ., Statistic == "g")
   }
 
-  # effct size text
+  # effect size text
   if (isTRUE(paired)) {
     effsize.text <- quote(italic("g")["Cohen"])
   } else {
@@ -278,6 +282,9 @@ subtitle_contingency_tab <- function(data,
 #' @importFrom tidyr uncount drop_na gather spread
 #' @importFrom rcompanion cramerVFit
 #' @importFrom jmv propTestN
+#'
+#' @details For more details about how the effect sizes and their confidence
+#'   intervals were computed, see documentation in `?rcompanion::cramerVFit`.
 #'
 #' @examples
 #'
