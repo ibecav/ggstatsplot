@@ -125,7 +125,6 @@ subtitle_t_parametric <- function(data,
   }
 
   # setting up the t-test model and getting its summary
-
   tobject <- stats::t.test(
     formula = y ~ x,
     data = data,
@@ -219,7 +218,7 @@ subtitle_t_parametric <- function(data,
 #'   below.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' set.seed(123)
 #'
 #' # -------------- between-subjects design ------------------------
@@ -693,7 +692,7 @@ subtitle_t_bayes <- function(data,
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' #---------------- two-sample test ------------------------------------
 #'
 #' # creating a smaller dataset

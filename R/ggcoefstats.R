@@ -22,7 +22,7 @@
 #' @param bf.message Logical that decides whether results from running a
 #'   Bayesian meta-analysis assuming that the effect size *d* varies across
 #'   studies with standard deviation *t* (i.e., a random-effects analysis)
-#'   should be displayed in caption. Defaults to `FALSE`.
+#'   should be displayed in caption. Defaults to `TRUE`.
 #' @param xlab Label for `x` axis variable (Default: `"estimate"`).
 #' @param ylab Label for `y` axis variable (Default: `"term"`).
 #' @param subtitle The text for the plot subtitle. The input to this argument
@@ -204,7 +204,7 @@
 #' ggstatsplot::ggcoefstats(x = mod, output = "augment")
 #'
 #' # -------------- with custom dataframe -----------------------------------
-#' \dontrun{
+#' \donttest{
 #' # creating a dataframe
 #' df <-
 #'   structure(
@@ -276,7 +276,6 @@
 #'   x = df,
 #'   statistic = "t",
 #'   meta.analytic.effect = TRUE,
-#'   bf.message = TRUE,
 #'   k = 3
 #' )
 #' }
@@ -319,7 +318,7 @@ ggcoefstats <- function(x,
                         conf.method = "Wald",
                         conf.type = "Wald",
                         component = "survival",
-                        bf.message = FALSE,
+                        bf.message = TRUE,
                         d = "norm",
                         d.par = c(0, 0.3),
                         tau = "halfcauchy",
@@ -423,41 +422,6 @@ ggcoefstats <- function(x,
       "TMB"
     )
 
-  # models which are currently not supported
-  unsupported.mods <-
-    c(
-      "acf",
-      "AUC",
-      "cv.glmnet",
-      "density",
-      "dist",
-      "durbinWatsonTest",
-      "elnet",
-      "emmGrid",
-      "ftable",
-      "glht",
-      "glmnet",
-      "kde",
-      "Kendall",
-      "kmeans",
-      "list",
-      "map",
-      "Mclust",
-      "mts",
-      "muhaz",
-      "optim",
-      "pam",
-      "poLCA",
-      "power.htest",
-      "prcomp",
-      "spec",
-      "survdiff",
-      "survexp",
-      "survfit",
-      "ts",
-      "zoo"
-    )
-
   # objects for which p-value needs to be computed using `sjstats` package
   p.mods <- c(
     "lmerMod",
@@ -487,21 +451,24 @@ ggcoefstats <- function(x,
     "manova"
   )
 
-  # changing conf.method to something suitable for Bayesian models
+  # changing `conf.method` to something suitable for Bayesian models
   if (class(x)[[1]] %in% bayes.mods && conf.method == "Wald") {
     conf.method <- "quantile"
   }
 
   # =========================== checking if object is supported ==============
 
-  # glace is not supported for all models
-  if (class(x)[[1]] %in% unsupported.mods) {
+  # those objects won't be supported for which there either no tidier
+  # or they don't contain an estimate term, so there is nothing to plot
+  if (!class(x)[[1]] %in% c(df.mods, f.mods, bayes.mods, "gam")
+  && !("estimate" %in% names(broomExtra::tidy(x)))) {
     stop(message(cat(
       crayon::red("Note: "),
       crayon::blue(
         "The object of class",
         crayon::yellow(class(x)[[1]]),
-        "aren't currently supported.\n"
+        "isn't currently supported-\n either because there is no tidier available",
+        "or because there is no `estimate` column present."
       ),
       sep = ""
     )),
@@ -509,7 +476,7 @@ ggcoefstats <- function(x,
     )
   }
 
-  # ============================= model and its summary ======================
+  # ============================= model summary ============================
 
   # creating glance dataframe
   glance_df <- broomExtra::glance(x)
@@ -557,13 +524,6 @@ ggcoefstats <- function(x,
       )),
       call. = FALSE
       )
-    }
-
-    # create a new term column if it's not present
-    if (!"term" %in% names(tidy_df)) {
-      tidy_df %<>%
-        dplyr::mutate(.data = ., term = 1:nrow(.)) %>%
-        dplyr::mutate(.data = ., term = as.character(term))
     }
 
     # check that statistic is specified
@@ -651,6 +611,14 @@ ggcoefstats <- function(x,
   }
 
   # =================== tidy dataframe cleanup ================================
+
+  # create a new term column if it's not present
+  if (!"term" %in% names(tidy_df)) {
+    tidy_df %<>%
+      dplyr::mutate(.data = ., term = 1:nrow(.)) %>%
+      dplyr::mutate(.data = ., term = as.character(term)) %>%
+      dplyr::mutate(.data = ., term = paste("term", term, sep = "_"))
+  }
 
   # selecting needed coefficients/parameters for ordinal regression models
   if (any(names(tidy_df) %in% c("coefficient_type", "coef.type"))) {
@@ -895,7 +863,7 @@ ggcoefstats <- function(x,
 
   # running meta-analysis
   if (isTRUE(meta.analytic.effect)) {
-    # result
+    # results from frequentist random-effects meta-analysis
     subtitle <-
       subtitle_meta_ggcoefstats(
         data = tidy_df,
@@ -904,7 +872,7 @@ ggcoefstats <- function(x,
         output = "subtitle"
       )
 
-    # add Bayes factor caption
+    # results from Bayesian random-effects meta-analysi
     if (isTRUE(bf.message)) {
       caption <-
         bf_meta_message(

@@ -18,10 +18,10 @@ boxviolin
 brainwt
 brms
 Camilli
+cbu
 cex
 changedate
 chartjunk
-chisquare
 Cochrane
 codecov
 Codecov
@@ -36,6 +36,7 @@ Cramer
 Cramer's
 Cramer'V
 Cramer’s
+Cramér’s
 cran
 Crichtlow
 customizable
@@ -48,6 +49,8 @@ dplyr
 ds
 Durbin
 Dwass
+effectSize
+effsize
 eg
 elasticnet
 Erlbaum
@@ -72,6 +75,8 @@ gh
 github
 Github
 Gitter
+gla
+GLMM
 GLMMs
 glyphs
 Gunel
@@ -91,6 +96,7 @@ img
 indrajeetpatil
 IndrajeetPatil
 intentionality
+interpretable
 io
 issuecomment
 jitter
@@ -122,10 +128,10 @@ moiré
 Mora
 mpaa
 MPAA
+mrc
 msleep
 multiway
 na
-ncchisq
 nd
 NHST
 noncentral
@@ -138,6 +144,7 @@ Oneway
 OpenGL
 Orcutt
 pandoc
+pb
 pch
 pearson's
 piechart
@@ -151,15 +158,16 @@ pre
 preferrred
 priori
 pseudolikelihood
+psy
 PsyArXiv
 purrr
 Quartile
 Rafferty
+rcompanion
 Rdoc
 readme
 README
 reproducibility
-rescaled
 rlbt
 Royston
 rpubs
@@ -175,6 +183,8 @@ softwares
 spearman
 sphericity
 srt
+statswiki
+steve
 stype
 svg
 tblr
@@ -186,6 +196,7 @@ tidyverse
 tl
 Tufte
 uber
+uk
 unadjusted
 unjittered
 vcov
@@ -199,6 +210,8 @@ Wickham
 wilcox
 Wilk
 Winsorized
+WRS
+www
 yellowgreen
 Yuen's
 Yuen’s

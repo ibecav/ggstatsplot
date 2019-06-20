@@ -11,10 +11,10 @@
 #'   be carried out) or between-subjects (in which case one-way Kruskal–Wallis H
 #'   test will be carried out). The default is `FALSE`.
 #' @param effsize.type Type of effect size needed for *parametric* tests. The
-#'   argument can be `"biased"` (`"d"` for Cohen's *d* for **t-test**;
-#'   `"partial_eta"` for partial eta-squared for **anova**) or `"unbiased"`
-#'   (`"g"` Hedge's *g* for **t-test**; `"partial_omega"` for partial
-#'   omega-squared for **anova**)).
+#'   argument can be `"biased"` (equivalent to `"d"` for Cohen's *d* for
+#'   **t-test**; `"partial_eta"` for partial eta-squared for **anova**) or
+#'   `"unbiased"` (equivalent to `"g"` Hedge's *g* for **t-test**;
+#'   `"partial_omega"` for partial omega-squared for **anova**)).
 #' @param sphericity.correction Logical that decides whether to apply correction
 #'   to account for violation of sphericity in a repeated measures design ANOVA
 #'   (Default: `TRUE`).
@@ -31,7 +31,6 @@
 #' @importFrom dplyr select
 #' @importFrom rlang !! enquo
 #' @importFrom stats lm oneway.test na.omit
-#' @importFrom sjstats eta_sq omega_sq
 #' @importFrom ez ezANOVA
 #' @importFrom groupedstats lm_effsize_standardizer
 #'
@@ -306,7 +305,7 @@ subtitle_anova_parametric <- function(data,
 #'
 #' @description For paired designs, the effect size is Kendall's coefficient of
 #'   concordance (*W*), while for between-subjects designs, the effect size is
-#'   H-statistic based eta-squared.
+#'   epsilon-squared (for more, see `?rcompanion::epsilonSquared`).
 #'
 #' @inheritParams t1way_ci
 #' @inheritParams subtitle_anova_parametric
@@ -316,6 +315,7 @@ subtitle_anova_parametric <- function(data,
 #' @importFrom rlang !! enquo
 #' @importFrom stats friedman.test kruskal.test
 #' @importFrom broomExtra tidy
+#' @importFrom rcompanion epsilonSquared
 #'
 #' @examples
 #' # setup
@@ -338,6 +338,7 @@ subtitle_anova_parametric <- function(data,
 #'   x = key,
 #'   y = value,
 #'   paired = TRUE,
+#'   conf.level = 0.99,
 #'   k = 2
 #' )
 #'
@@ -348,7 +349,8 @@ subtitle_anova_parametric <- function(data,
 #'   x = vore,
 #'   y = sleep_rem,
 #'   paired = FALSE,
-#'   conf.level = 0.99
+#'   conf.level = 0.99,
+#'   conf.type = "perc"
 #' )
 #' @export
 
@@ -424,14 +426,24 @@ subtitle_anova_nonparametric <- function(data,
 
     # getting partial eta-squared based on H-statistic
     effsize_df <-
-      suppressWarnings(kw_eta_h_ci(
-        data = data,
-        x = x,
-        y = y,
-        nboot = nboot,
-        conf.level = conf.level,
-        conf.type = conf.type
-      ))
+      rcompanion::epsilonSquared(
+        x = data$y,
+        g = data$x,
+        group = "row",
+        ci = TRUE,
+        conf = conf.level,
+        type = conf.type,
+        R = nboot,
+        histogram = FALSE,
+        digits = 5
+      ) %>%
+      tibble::as_tibble(x = .) %>%
+      dplyr::rename(
+        .data = .,
+        estimate = epsilon.squared,
+        conf.low = lower.ci,
+        conf.high = upper.ci
+      )
   }
 
   # message about effect size measure
@@ -443,7 +455,7 @@ subtitle_anova_nonparametric <- function(data,
   if (isTRUE(paired)) {
     effsize.text <- quote(italic("W")["Kendall"])
   } else {
-    effsize.text <- quote(eta["H"]^2)
+    effsize.text <- quote(epsilon^2)
   }
 
   # preparing subtitle
@@ -482,7 +494,7 @@ subtitle_anova_nonparametric <- function(data,
 #'
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' # for reproducibility
 #' set.seed(123)
 #'
@@ -661,10 +673,9 @@ subtitle_anova_robust <- function(data,
 #' @importFrom dplyr select
 #' @importFrom rlang !! enquo
 #' @importFrom stats lm oneway.test na.omit
-#' @importFrom sjstats eta_sq omega_sq
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' set.seed(123)
 #'
 #' # between-subjects ---------------------------------------
