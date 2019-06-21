@@ -11,7 +11,7 @@ testthat::test_that(
     set.seed(123)
     using_function1 <-
       suppressWarnings(ggstatsplot::subtitle_contingency_tab(
-        data = Titanic_full,
+        data = ggstatsplot::Titanic_full,
         main = "Survived",
         condition = Class,
         stat.title = "Testing",
@@ -28,7 +28,7 @@ testthat::test_that(
       ggplot2::expr(
         paste(
           "Testing",
-          italic(chi)^2,
+          chi["Pearson"]^2,
           "(",
           "3",
           ") = ",
@@ -102,7 +102,7 @@ testthat::test_that(
       ggplot2::expr(
         paste(
           NULL,
-          italic(chi)^2,
+          chi["Pearson"]^2,
           "(",
           "NA",
           ") = ",
