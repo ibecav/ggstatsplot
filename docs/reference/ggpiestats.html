@@ -58,6 +58,7 @@ included in the plot as a subtitle." />
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -171,6 +172,7 @@ included in the plot as a subtitle." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -195,8 +197,9 @@ included in the plot as a subtitle.</p>
   <span class='kw'>label.fill.color</span> <span class='kw'>=</span> <span class='st'>"white"</span>, <span class='kw'>label.fill.alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>bf.message</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>sampling.plan</span> <span class='kw'>=</span> <span class='st'>"indepMulti"</span>,
   <span class='kw'>fixed.margin</span> <span class='kw'>=</span> <span class='st'>"rows"</span>, <span class='kw'>prior.concentration</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>subtitle</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>conf.level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='kw'>nboot</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>simulate.p.value</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>2000</span>, <span class='kw'>legend.title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>subtitle</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>conf.level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>,
+  <span class='kw'>bf.prior</span> <span class='kw'>=</span> <span class='fl'>0.707</span>, <span class='kw'>nboot</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>simulate.p.value</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>2000</span>, <span class='kw'>bias.correct</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>legend.title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>facet.wrap.name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>perc.k</span> <span class='kw'>=</span> <span class='fl'>0</span>,
   <span class='kw'>slice.label</span> <span class='kw'>=</span> <span class='st'>"percentage"</span>, <span class='kw'>facet.proptest</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>ggtheme</span> <span class='kw'>=</span> <span class='kw pkg'>ggplot2</span><span class='kw ns'>::</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggtheme.html'>theme_bw</a></span>(), <span class='kw'>ggstatsplot.layer</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
@@ -213,13 +216,14 @@ be taken. A matrix or tables will <strong>not</strong> be accepted.</p></td>
     </tr>
     <tr>
       <th>main</th>
-      <td><p>The variable to use as the <strong>rows</strong> in the
-contingency table.</p></td>
+      <td><p>The variable to use as the <strong>rows</strong> in the contingency table.</p></td>
     </tr>
     <tr>
       <th>condition</th>
       <td><p>The variable to use as the <strong>columns</strong> in the contingency
-table.</p></td>
+table. Default is <code>NULL</code>. If <code>NULL</code>, one-sample proportion test (a goodness
+of fit test) will be run for the <code>main</code> variable. Otherwise an appropriate
+association test will be run.</p></td>
     </tr>
     <tr>
       <th>counts</th>
@@ -233,9 +237,10 @@ test. Default is <code>NULL</code>, which means if there are two levels <code>ra
     </tr>
     <tr>
       <th>paired</th>
-      <td><p>Logical indicating whether data came from a within-subjects
-design study (Default: <code>FALSE</code>). If <code>TRUE</code>, McNemar test subtitle will be
-returned. If <code>FALSE</code>, Pearson's chi-square test will be returned.</p></td>
+      <td><p>Logical indicating whether data came from a within-subjects or
+repeated measures design study (Default: <code>FALSE</code>). If <code>TRUE</code>, McNemar's
+test subtitle will be returned. If <code>FALSE</code>, Pearson's chi-square test will
+be returned.</p></td>
     </tr>
     <tr>
       <th>results.subtitle</th>
@@ -327,6 +332,11 @@ hypothesis under the alternative, and corresponds to Gunel and Dickey's
 <code>95%</code> lower and upper confidence intervals (<code>0.95</code>).</p></td>
     </tr>
     <tr>
+      <th>bf.prior</th>
+      <td><p>A number between <code>0.5</code> and <code>2</code> (default <code>0.707</code>), the prior
+width to use in calculating Bayes factors.</p></td>
+    </tr>
+    <tr>
       <th>nboot</th>
       <td><p>Number of bootstrap samples for computing confidence interval
 for the effect size (Default: <code>100</code>).</p></td>
@@ -340,6 +350,11 @@ for the effect size (Default: <code>100</code>).</p></td>
       <th>B</th>
       <td><p>an integer specifying the number of replicates used in the
     Monte Carlo test.</p></td>
+    </tr>
+    <tr>
+      <th>bias.correct</th>
+      <td><p>If <code>TRUE</code>, a bias correction will be applied to Cramer's
+<em>V</em>.</p></td>
     </tr>
     <tr>
       <th>legend.title</th>
@@ -469,16 +484,15 @@ are computed, see <code><a href='https://rdrr.io/pkg/rcompanion/man/cohenG.html'
   <span class='kw'>nboot</span> <span class='kw'>=</span> <span class='fl'>10</span>,
   <span class='kw'>factor.levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"0 = V-shaped"</span>, <span class='st'>"1 = straight"</span>),
   <span class='kw'>legend.title</span> <span class='kw'>=</span> <span class='st'>"Engine"</span>
-)</div><div class='output co'>#&gt; </span><span style='color: #00BB00;'>Note: </span><span style='color: #0000BB;'>Results from one-sample proportion tests for each
-#&gt;       level of the variable </span><span style='color: #BBBB00;'>cyl</span><span style='color: #0000BB;'> testing for equal
-#&gt;       proportions of the variable </span><span style='color: #BBBB00;'>vs</span><span style='color: #0000BB;'>.
-#&gt; </span><span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 7</span><span>
-#&gt;   condition `0`     `1`    `Chi-squared`    df `p-value` significance
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       
-#&gt; </span><span style='color: #555555;'>1</span><span> 4         9.09%   90.91%         7.36      1     0.007 **          
-#&gt; </span><span style='color: #555555;'>2</span><span> 6         42.86%  57.14%         0.143     1     0.705 ns          
-#&gt; </span><span style='color: #555555;'>3</span><span> 8         100.00% </span><span style='color: #BB0000;'>NA</span><span>            14         1     0     ***         </div><div class='output co'>#&gt; <span class='warning'>Warning: Chi-squared approximation may be incorrect</span></div><div class='output co'>#&gt; </span><span style='color: #00BB00;'>Note: </span><span style='color: #BBBB00;'>95%</span><span style='color: #0000BB;'> CI for effect size estimate was computed with </span><span style='color: #BBBB00;'>10</span><span style='color: #0000BB;'> bootstrap samples.
-#&gt; </span><span></div><div class='output co'>#&gt; </div><div class='img'><img src='ggpiestats-2.png' alt='' width='700' height='433' /></div><div class='input'>
+)</div><div class='output co'>#&gt; <span class='warning'>Warning: Chi-squared approximation may be incorrect</span></div><div class='output co'>#&gt; </span><span style='color: #00BB00;'>Note: </span><span style='color: #BBBB00;'>95%</span><span style='color: #0000BB;'> CI for effect size estimate was computed with </span><span style='color: #BBBB00;'>10</span><span style='color: #0000BB;'> bootstrap samples.
+#&gt; </span><span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; </span><span style='color: #00BB00;'>Note: </span><span style='color: #0000BB;'>Results from one-sample proportion tests for each level of the variable
+#&gt; </span><span style='color: #BBBB00;'>cyl</span><span style='color: #0000BB;'> testing for equal proportions of the variable </span><span style='color: #BBBB00;'>vs</span><span style='color: #0000BB;'>.
+#&gt; </span><span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 3 x 8</span><span>
+#&gt;   condition N        `0`     `1`    `Chi-squared`    df `p-value` significance
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       
+#&gt; </span><span style='color: #555555;'>1</span><span> 4         (n = 11) 9.09%   90.91%         7.36      1     0.007 **          
+#&gt; </span><span style='color: #555555;'>2</span><span> 6         (n = 7)  42.86%  57.14%         0.143     1     0.705 ns          
+#&gt; </span><span style='color: #555555;'>3</span><span> 8         (n = 14) 100.00% </span><span style='color: #BB0000;'>NA</span><span>            14         1     0     ***         </div><div class='img'><img src='ggpiestats-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># simple function call with the defaults (without condition; with count data)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>jmv</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
@@ -508,6 +522,7 @@ are computed, see <code><a href='https://rdrr.io/pkg/rcompanion/man/cohenG.html'
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by <a href='https://sites.google.com/site/indrajeetspatilmorality/'>Indrajeet Patil</a>, <a href='https://ibecav.github.io/'>Chuck Powell</a>.</p>
@@ -516,6 +531,7 @@ are computed, see <code><a href='https://rdrr.io/pkg/rcompanion/man/cohenG.html'
 <div class="pkgdown">
   <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.9100.</p>
 </div>
+
       </footer>
    </div>
 
@@ -538,6 +554,8 @@ are computed, see <code><a href='https://rdrr.io/pkg/rcompanion/man/cohenG.html'
 </script>
 
 
+
   </body>
 </html>
+
 
