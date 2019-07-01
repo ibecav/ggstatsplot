@@ -11,9 +11,20 @@ MINOR CHANGES
   - `ggcoefstats` defaults to `bf.message = TRUE` to be consistent with the rest
     of the functions in the package.
   - `ggcoefstats` supports the following class of objects: `epi.2by2`, `negbin`,
-    `emmGrid`, `lmrob`, `glmrob`, `glmmPQL`.
+    `emmGrid`, `lmrob`, `glmrob`, `glmmPQL`, `data.table`.
   - `bf_ttest` is introduced as a general function. The previously exported
     `bf_one_sample_ttest` and `bf_two_sample_ttest` become its aliases.
+
+BREAKING CHANGES
+
+  - The vestigial arguments `axis.text.x.margin.t`, `axis.text.x.margin.r`,
+    `axis.text.x.margin.b`, `axis.text.x.margin.l` for `ggcorrmat` have been
+    removed. The margins can be adjusted using `ggplot2::margin()`.
+  - `gghistostats` no longer allows `data` argument to be `NULL`. This is to
+    make this function's syntax consistent with rest of the functions in this
+    package (none of which allow `data` to be `NULL`). This also removes
+    confusion that arose for some users when `data` couldn't be `NULL` for its
+    `grouped_` cousin (`grouped_gghistostats`).
 
 # ggstatsplot 0.0.11
  

@@ -192,17 +192,16 @@
   <span class='kw'>output</span> <span class='kw'>=</span> <span class='st'>"plot"</span>, <span class='kw'>matrix.type</span> <span class='kw'>=</span> <span class='st'>"full"</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"square"</span>,
   <span class='kw'>corr.method</span> <span class='kw'>=</span> <span class='st'>"pearson"</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>exact</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>continuity</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>beta</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>sig.level</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>p.adjust.method</span> <span class='kw'>=</span> <span class='st'>"none"</span>, <span class='kw'>hc.order</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>hc.method</span> <span class='kw'>=</span> <span class='st'>"complete"</span>, <span class='kw'>lab</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"RColorBrewer"</span>,
-  <span class='kw'>palette</span> <span class='kw'>=</span> <span class='st'>"Dark2"</span>, <span class='kw'>direction</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>colors</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#E69F00"</span>, <span class='st'>"white"</span>,
-  <span class='st'>"#009E73"</span>), <span class='kw'>outline.color</span> <span class='kw'>=</span> <span class='st'>"black"</span>, <span class='kw'>ggtheme</span> <span class='kw'>=</span> <span class='kw pkg'>ggplot2</span><span class='kw ns'>::</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggtheme.html'>theme_bw</a></span>(),
-  <span class='kw'>ggstatsplot.layer</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>subtitle</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>caption.default</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>lab.col</span> <span class='kw'>=</span> <span class='st'>"black"</span>,
-  <span class='kw'>lab.size</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>insig</span> <span class='kw'>=</span> <span class='st'>"pch"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>pch.col</span> <span class='kw'>=</span> <span class='st'>"black"</span>,
-  <span class='kw'>pch.cex</span> <span class='kw'>=</span> <span class='fl'>11</span>, <span class='kw'>tl.cex</span> <span class='kw'>=</span> <span class='fl'>12</span>, <span class='kw'>tl.col</span> <span class='kw'>=</span> <span class='st'>"black"</span>, <span class='kw'>tl.srt</span> <span class='kw'>=</span> <span class='fl'>45</span>,
-  <span class='kw'>axis.text.x.margin.l</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>axis.text.x.margin.t</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>axis.text.x.margin.r</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>axis.text.x.margin.b</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>messages</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>sig.level</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>conf.level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='kw'>p.adjust.method</span> <span class='kw'>=</span> <span class='st'>"none"</span>,
+  <span class='kw'>hc.order</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>hc.method</span> <span class='kw'>=</span> <span class='st'>"complete"</span>, <span class='kw'>lab</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"RColorBrewer"</span>, <span class='kw'>palette</span> <span class='kw'>=</span> <span class='st'>"Dark2"</span>, <span class='kw'>direction</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>colors</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#E69F00"</span>, <span class='st'>"white"</span>, <span class='st'>"#009E73"</span>), <span class='kw'>outline.color</span> <span class='kw'>=</span> <span class='st'>"black"</span>,
+  <span class='kw'>ggtheme</span> <span class='kw'>=</span> <span class='kw pkg'>ggplot2</span><span class='kw ns'>::</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggtheme.html'>theme_bw</a></span>(), <span class='kw'>ggstatsplot.layer</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>subtitle</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>caption.default</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>lab.col</span> <span class='kw'>=</span> <span class='st'>"black"</span>, <span class='kw'>lab.size</span> <span class='kw'>=</span> <span class='fl'>5</span>,
+  <span class='kw'>insig</span> <span class='kw'>=</span> <span class='st'>"pch"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>pch.col</span> <span class='kw'>=</span> <span class='st'>"black"</span>, <span class='kw'>pch.cex</span> <span class='kw'>=</span> <span class='fl'>11</span>,
+  <span class='kw'>tl.cex</span> <span class='kw'>=</span> <span class='fl'>12</span>, <span class='kw'>tl.col</span> <span class='kw'>=</span> <span class='st'>"black"</span>, <span class='kw'>tl.srt</span> <span class='kw'>=</span> <span class='fl'>45</span>, <span class='kw'>messages</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>return</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -224,12 +223,12 @@ computed and visualized. If <code>NULL</code> (default), all numeric variables f
 names should be entered in the same order.</p></td>
     </tr>
     <tr>
-      <th>output</th>
-      <td><p>Character that decides expected output from this function:
-<code>"plot"</code> (for visualization matrix) or <code>"correlations"</code> (or <code>"corr"</code> or
-<code>"r"</code>; for correlation matrix) or <code>"p-values"</code> (or <code>"p.values"</code> or <code>"p"</code>;
-for a matrix of <em>p</em>-values) or <code>"ci"</code> (for a tibble with confidence
-intervals for unique correlation pairs; not available for robust
+      <th>output, return</th>
+      <td><p>Character that decides expected output from this
+function: <code>"plot"</code> (for visualization matrix) or <code>"correlations"</code> (or
+<code>"corr"</code> or <code>"r"</code>; for correlation matrix) or <code>"p-values"</code> (or <code>"p.values"</code>
+or <code>"p"</code>; for a matrix of <em>p</em>-values) or <code>"ci"</code> (for a tibble with
+confidence intervals for unique correlation pairs; not available for robust
 correlation) or <code>"n"</code> (or <code>"sample.size"</code> for a tibble with sample sizes
 for each correlation pair).</p></td>
     </tr>
@@ -257,19 +256,18 @@ will also work: <code>"p"</code> (for parametric/Pearson's <em>r</em>), <code>"n
     <tr>
       <th>exact</th>
       <td><p>A logical indicating whether an exact <em>p</em>-value should be
-computed. Used for Kendall's <em>tau</em> and Spearman's <em>rho</em>. For more details,
-see <code><a href='https://rdrr.io/r/stats/cor.test.html'>?stats::cor.test</a></code>.</p></td>
+computed. Used for Spearman's <em>rho</em>. For more details, see
+<code><a href='https://rdrr.io/r/stats/cor.test.html'>?stats::cor.test</a></code>.</p></td>
     </tr>
     <tr>
       <th>continuity</th>
       <td><p>A logical. If <code>TRUE</code>, a continuity correction is used for
-Kendall's <em>tau</em> and Spearman's <em>rho</em> when not computed exactly (Default:
-<code>TRUE</code>).</p></td>
+Spearman's <em>rho</em> when not computed exactly (Default: <code>TRUE</code>).</p></td>
     </tr>
     <tr>
       <th>beta</th>
-      <td><p>A numeric bending constant for robust correlation coefficient
-(Default: <code>0.1</code>).</p></td>
+      <td><p>A numeric bending constant for percentage bend robust correlation
+coefficient (Default: <code>0.1</code>).</p></td>
     </tr>
     <tr>
       <th>digits, k</th>
@@ -282,6 +280,11 @@ Kendall's <em>tau</em> and Spearman's <em>rho</em> when not computed exactly (De
 <em>p</em>-value matrix is bigger than <code>sig.level</code>, then the corresponding
 correlation coefficient is regarded as insignificant and flagged as such in
 the plot. This argument is relevant only when <code>output = "plot"</code>.</p></td>
+    </tr>
+    <tr>
+      <th>conf.level</th>
+      <td><p>Scalar between 0 and 1. If unspecified, the defaults return
+<code>95%</code> lower and upper confidence intervals (<code>0.95</code>).</p></td>
     </tr>
     <tr>
       <th>p.adjust.method</th>
@@ -356,13 +359,13 @@ theme elements are to be displayed along with the selected <code>ggtheme</code>
     </tr>
     <tr>
       <th>caption</th>
-      <td><p>The text for the plot caption. If not specified (if it is
-<code>NULL</code>, i.e.), a default caption will be shown.</p></td>
+      <td><p>The text for the plot caption. If <code>NULL</code>, a default caption
+will be shown.</p></td>
     </tr>
     <tr>
       <th>caption.default</th>
-      <td><p>Logical decides whether the default caption should be
-shown.</p></td>
+      <td><p>Logical that decides whether the default caption
+should be shown (default: <code>TRUE</code>).</p></td>
     </tr>
     <tr>
       <th>lab.col</th>
@@ -398,12 +401,6 @@ Default value is <code>pch = 4</code>.</p></td>
 text label (variable names, i.e.).</p></td>
     </tr>
     <tr>
-      <th>axis.text.x.margin.t, axis.text.x.margin.r, axis.text.x.margin.b, axis.text.x.margin.l</th>
-      <td><p>Margins between x-axis and the variable name texts (t: top, r: right, b:
-bottom, l:left), especially useful in case the names are slanted, i.e. when
-the tl.srt is between <code>45</code> and <code>75</code> (Defaults: <code>0</code>, <code>0</code>, <code>0</code>, <code>0</code>, resp.).</p></td>
-    </tr>
-    <tr>
       <th>messages</th>
       <td><p>Decides whether messages references, notes, and warnings are
 to be displayed (Default: <code>TRUE</code>).</p></td>
@@ -413,7 +410,7 @@ to be displayed (Default: <code>TRUE</code>).</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Correlation matrix plot or correlation coefficient matrix or matrix
-of p-values.</p>
+of <em>p</em>-values.</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -440,7 +437,7 @@ of p-values.</p>
   <span class='kw'>cor.vars</span> <span class='kw'>=</span> <span class='no'>sleep_total</span>:<span class='no'>bodywt</span>,
   <span class='kw'>cor.vars.names</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"total sleep"</span>, <span class='st'>"REM sleep"</span>)
 ) + <span class='co'># further modification using `ggplot2`</span>
-  <span class='kw pkg'>ggplot2</span><span class='kw ns'>::</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_discrete.html'>scale_y_discrete</a></span>(<span class='kw'>position</span> <span class='kw'>=</span> <span class='st'>"right"</span>)</div><div class='output co'>#&gt; <span style='color: #BB0000;'>Warning: </span><span style='color: #0000BB;'>Number of variable names does not equal the number of variables.
+  <span class='kw pkg'>ggplot2</span><span class='kw ns'>::</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_discrete.html'>scale_y_discrete</a></span>(<span class='kw'>position</span> <span class='kw'>=</span> <span class='st'>"right"</span>)</div><div class='output co'>#&gt; <span style='color: #BB0000;'>Warning: </span><span style='color: #0000BB;'>No. of variable names doesn't equal no. of variables.
 #&gt; </span><span></div><div class='output co'>#&gt; </div><div class='img'><img src='ggcorrmat-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># to get the correlation matrix</span>
 <span class='kw pkg'>ggstatsplot</span><span class='kw ns'>::</span><span class='fu'><a href='https://indrajeetpatil.github.io/ggstatsplot//reference/ggcorrmat.html'>ggcorrmat</a></span>(

@@ -94,16 +94,14 @@ subtitle_anova_parametric <- function(data,
   # for paired designs, variance is going to be equal across grouping levels
   if (isTRUE(paired)) {
     var.equal <- TRUE
+  } else {
+    sphericity.correction <- FALSE
   }
 
   # number of decimal places for degree of freedom
   if (isTRUE(var.equal)) {
-    if (isTRUE(paired)) {
-      if (isTRUE(sphericity.correction)) {
-        k.df2 <- k
-      } else {
-        k.df2 <- 0L
-      }
+    if (isTRUE(sphericity.correction)) {
+      k.df2 <- k
     } else {
       k.df2 <- 0L
     }
@@ -149,11 +147,7 @@ subtitle_anova_parametric <- function(data,
 
   # creating a dataframe
   data <-
-    dplyr::select(
-      .data = data,
-      x = !!rlang::enquo(x),
-      y = !!rlang::enquo(y)
-    ) %>%
+    dplyr::select(.data = data, x = {{ x }}, y = {{ y }}) %>%
     dplyr::mutate(.data = ., x = droplevels(as.factor(x))) %>%
     tibble::as_tibble(x = .)
 
@@ -369,11 +363,7 @@ subtitle_anova_nonparametric <- function(data,
 
   # creating a dataframe
   data <-
-    dplyr::select(
-      .data = data,
-      x = !!rlang::enquo(x),
-      y = !!rlang::enquo(y)
-    ) %>%
+    dplyr::select(.data = data, x = {{ x }}, y = {{ y }}) %>%
     dplyr::mutate(.data = ., x = droplevels(as.factor(x))) %>%
     tibble::as_tibble(x = .)
 
@@ -549,11 +539,7 @@ subtitle_anova_robust <- function(data,
 
   # creating a dataframe
   data <-
-    dplyr::select(
-      .data = data,
-      x = !!rlang::enquo(x),
-      y = !!rlang::enquo(y)
-    ) %>%
+    dplyr::select(.data = data, x = {{ x }}, y = {{ y }}) %>%
     dplyr::mutate(.data = ., x = droplevels(as.factor(x))) %>%
     tibble::as_tibble(x = .)
 
@@ -717,11 +703,7 @@ subtitle_anova_bayes <- function(data,
 
   # creating a dataframe
   data <-
-    dplyr::select(
-      .data = data,
-      x = !!rlang::enquo(x),
-      y = !!rlang::enquo(y)
-    ) %>%
+    dplyr::select(.data = data, x = {{ x }}, y = {{ y }}) %>%
     dplyr::mutate(.data = ., x = droplevels(as.factor(x))) %>%
     tibble::as_tibble(x = .)
 
