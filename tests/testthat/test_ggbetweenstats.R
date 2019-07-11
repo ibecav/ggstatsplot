@@ -234,7 +234,7 @@ testthat::test_that(
           ") = ",
           "1.54274",
           ", ",
-          italic("r")["Cauchy"],
+          italic("r")["Cauchy"]^"JZS",
           " = ",
           "0.70700"
         )
@@ -319,6 +319,44 @@ testthat::test_that(
       pb$layout$panel_params[[1]]$y.labels,
       c("1", "2", "3", "4", "5", "6")
     )
+  }
+)
+
+# plot caption is correct --------------------------------------------------
+
+testthat::test_that(
+  desc = "checking mean labels are working",
+  code = {
+    testthat::skip_on_cran()
+
+    library(ggplot2)
+
+    # caption for the plot
+    set.seed(254)
+    plot_caption <-
+      ggstatsplot::ggbetweenstats(
+        data = msleep,
+        x = vore,
+        y = brainwt,
+        messages = FALSE,
+        bf.prior = 0.85,
+        k = 3,
+        return = "caption"
+      )
+
+    # function output
+    set.seed(254)
+    fun_output <-
+      bf_oneway_anova(
+        data = msleep,
+        x = vore,
+        y = brainwt,
+        bf.prior = 0.85,
+        k = 3
+      )
+
+    # these should be equal
+    testthat::expect_identical(plot_caption, fun_output)
   }
 )
 

@@ -1,4 +1,10 @@
-# ggstatsplot 0.0.11.9000
+# ggstatsplot 0.0.12
+
+BUG FIXES
+
+  - Bayes Factor in `ggwithinstats` caption, displayed by default, was
+    incorrect. This has been fixed. This stemmed from a line of code which
+    should have been `paired = TRUE`, but was instead `paired = FALSE`.
 
 MAJOR CHANGES
 
