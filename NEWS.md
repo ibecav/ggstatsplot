@@ -1,3 +1,5 @@
+# ggstatsplot 0.0.12.9000
+
 # ggstatsplot 0.0.12
 
 BUG FIXES
@@ -20,6 +22,8 @@ MINOR CHANGES
     `emmGrid`, `lmrob`, `glmrob`, `glmmPQL`, `data.table`.
   - `bf_ttest` is introduced as a general function. The previously exported
     `bf_one_sample_ttest` and `bf_two_sample_ttest` become its aliases.
+  - `bf_meta_message` syntax changes to adapt to updates made to `metaBMA`
+    package (thanks to #259).
 
 BREAKING CHANGES
 
