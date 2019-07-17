@@ -77,7 +77,7 @@ caption." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ggstatsplot</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.11.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.12</span>
       </span>
     </div>
 
@@ -195,9 +195,9 @@ caption.</p>
 
     <pre class="usage"><span class='fu'>ggcoefstats</span>(<span class='no'>x</span>, <span class='kw'>output</span> <span class='kw'>=</span> <span class='st'>"plot"</span>, <span class='kw'>statistic</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>scales</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>conf.method</span> <span class='kw'>=</span> <span class='st'>"Wald"</span>, <span class='kw'>conf.type</span> <span class='kw'>=</span> <span class='st'>"Wald"</span>, <span class='kw'>component</span> <span class='kw'>=</span> <span class='st'>"survival"</span>,
-  <span class='kw'>bf.message</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>d</span> <span class='kw'>=</span> <span class='st'>"norm"</span>, <span class='kw'>d.par</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>0.3</span>),
-  <span class='kw'>tau</span> <span class='kw'>=</span> <span class='st'>"halfcauchy"</span>, <span class='kw'>tau.par</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>sample</span> <span class='kw'>=</span> <span class='fl'>10000</span>,
-  <span class='kw'>summarize</span> <span class='kw'>=</span> <span class='st'>"integrate"</span>, <span class='kw'>p.kr</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>p.adjust.method</span> <span class='kw'>=</span> <span class='st'>"none"</span>,
+  <span class='kw'>bf.message</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>d</span> <span class='kw'>=</span> <span class='st'>"norm"</span>, <span class='kw'>d.par</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>mean</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>sd</span> <span class='kw'>=</span> <span class='fl'>0.3</span>),
+  <span class='kw'>tau</span> <span class='kw'>=</span> <span class='st'>"halfcauchy"</span>, <span class='kw'>tau.par</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>0.5</span>), <span class='kw'>iter</span> <span class='kw'>=</span> <span class='fl'>5000</span>,
+  <span class='kw'>summarize</span> <span class='kw'>=</span> <span class='st'>"stan"</span>, <span class='kw'>p.kr</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>p.adjust.method</span> <span class='kw'>=</span> <span class='st'>"none"</span>,
   <span class='kw'>coefficient.type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"beta"</span>, <span class='st'>"location"</span>, <span class='st'>"coefficient"</span>),
   <span class='kw'>by.class</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>effsize</span> <span class='kw'>=</span> <span class='st'>"eta"</span>, <span class='kw'>partial</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>nboot</span> <span class='kw'>=</span> <span class='fl'>500</span>,
   <span class='kw'>meta.analytic.effect</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>point.color</span> <span class='kw'>=</span> <span class='st'>"blue"</span>, <span class='kw'>point.size</span> <span class='kw'>=</span> <span class='fl'>3</span>,
@@ -283,27 +283,31 @@ should be displayed in caption. Defaults to <code>TRUE</code>.</p></td>
     </tr>
     <tr>
       <th>d</th>
-      <td><p>type of prior for mean effect \(d\) (see <code>prior</code>)</p></td>
+      <td><p>the prior distribution of the average effect size \(d\) specified
+either as the type of family (e.g., <code>"norm"</code>) or via <code><a href='https://rdrr.io/pkg/metaBMA/man/prior.html'>prior</a></code></p></td>
     </tr>
     <tr>
       <th>d.par</th>
-      <td><p>prior parameters for \(d\)</p></td>
+      <td><p>prior parameters for \(d\) (only used if <code>d</code> specifies the type of family)</p></td>
     </tr>
     <tr>
       <th>tau</th>
-      <td><p>type of prior for standard deviation of study effects \(\tau\) in random-effects meta-analysis (i.e., the SD of d across studies; see <code>prior</code>)</p></td>
+      <td><p>the prior distribution of the between-study heterogeneity \(\tau\) specified
+either as a character value (e.g., <code>"halfcauchy"</code>) or via <code><a href='https://rdrr.io/pkg/metaBMA/man/prior.html'>prior</a></code></p></td>
     </tr>
     <tr>
       <th>tau.par</th>
-      <td><p>prior parameters for \(\tau\)</p></td>
+      <td><p>prior parameters for \(\tau\)  (only used if <code>tau</code> specifies the type of family)</p></td>
     </tr>
     <tr>
-      <th>sample</th>
-      <td><p>number of samples in JAGS after burn-in and thinning (see <code><a href='https://rdrr.io/pkg/runjags/man/run.jags.html'>run.jags</a></code>). Samples are used to get posterior  estimates for each study effect (which will show shrinkage). Only works for priors defined in <code>prior</code>.</p></td>
+      <th>iter</th>
+      <td><p>number of MCMC iterations using Stan.</p></td>
     </tr>
     <tr>
       <th>summarize</th>
-      <td><p>whether and to compute parameter summaries (mean, median, SD, 95% quantile interval, HPD interval). If <code>summarize = "integrate"</code>, numerical integration is used  (which is precise but can require some seconds of computing time), <code>summarize = "jags"</code> summarizes the JAGS samples, and <code>summarize = "none"</code> suppresses parameter summaries.</p></td>
+      <td><p>how to estimate parameter summaries (mean, median, SD,
+etc.): Either by numerical integration (<code>summarize = "integrate"</code>) or
+based on MCMC/Stan samples (<code>summarize = "stan"</code>).</p></td>
     </tr>
     <tr>
       <th>p.kr</th>
@@ -738,7 +742,8 @@ confidence interval whiskers.</p>
   <span class='kw'>statistic</span> <span class='kw'>=</span> <span class='st'>"t"</span>,
   <span class='kw'>meta.analytic.effect</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>3</span>
-)</div><div class='img'><img src='ggcoefstats-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># -------------- getting model summary ------------------------------</span>
+)</div><div class='output co'>#&gt; <span class='warning'>Warning: There were 9 divergent transitions after warmup. Increasing adapt_delta above 0.95 may help. See</span>
+#&gt; <span class='warning'>http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Examine the pairs() plot to diagnose sampling problems</span></div><div class='img'><img src='ggcoefstats-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># -------------- getting model summary ------------------------------</span>
 
 <span class='co'># model</span>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>lme4</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: Matrix</span></div><div class='input'><span class='no'>lmm1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span>(

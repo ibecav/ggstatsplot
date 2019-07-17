@@ -94,16 +94,14 @@ subtitle_anova_parametric <- function(data,
   # for paired designs, variance is going to be equal across grouping levels
   if (isTRUE(paired)) {
     var.equal <- TRUE
+  } else {
+    sphericity.correction <- FALSE
   }
 
   # number of decimal places for degree of freedom
   if (isTRUE(var.equal)) {
-    if (isTRUE(paired)) {
-      if (isTRUE(sphericity.correction)) {
-        k.df2 <- k
-      } else {
-        k.df2 <- 0L
-      }
+    if (isTRUE(sphericity.correction)) {
+      k.df2 <- k
     } else {
       k.df2 <- 0L
     }
@@ -149,11 +147,7 @@ subtitle_anova_parametric <- function(data,
 
   # creating a dataframe
   data <-
-    dplyr::select(
-      .data = data,
-      x = !!rlang::enquo(x),
-      y = !!rlang::enquo(y)
-    ) %>%
+    dplyr::select(.data = data, x = {{ x }}, y = {{ y }}) %>%
     dplyr::mutate(.data = ., x = droplevels(as.factor(x))) %>%
     tibble::as_tibble(x = .)
 
@@ -183,9 +177,7 @@ subtitle_anova_parametric <- function(data,
       # inform the user
       message(cat(
         crayon::red("Warning: "),
-        crayon::blue(
-          "No. of factor levels is greater than number of observations per cell.\n"
-        ),
+        crayon::blue("No. of factor levels is greater than no. of observations per cell.\n"),
         crayon::blue("No sphericity correction applied. Interpret the results with caution.\n")
       ),
       sep = ""
@@ -369,11 +361,7 @@ subtitle_anova_nonparametric <- function(data,
 
   # creating a dataframe
   data <-
-    dplyr::select(
-      .data = data,
-      x = !!rlang::enquo(x),
-      y = !!rlang::enquo(y)
-    ) %>%
+    dplyr::select(.data = data, x = {{ x }}, y = {{ y }}) %>%
     dplyr::mutate(.data = ., x = droplevels(as.factor(x))) %>%
     tibble::as_tibble(x = .)
 
@@ -402,12 +390,16 @@ subtitle_anova_nonparametric <- function(data,
       ))
 
     # calculating Kendall's W and its CI
-    effsize_df <- kendall_w_ci(
-      data = dplyr::select(long_to_wide_converter(data, x, y), -rowid),
-      nboot = nboot,
-      conf.type = conf.type,
-      conf.level = conf.level
-    )
+    effsize_df <-
+      kendall_w_ci(
+        data = dplyr::select(long_to_wide_converter(data, x, y), -rowid),
+        nboot = nboot,
+        conf.type = conf.type,
+        conf.level = conf.level
+      )
+
+    # text for effect size
+    effsize.text <- quote(italic("W")["Kendall"])
   } else {
     # remove NAs listwise for between-subjects design
     data %<>%
@@ -444,18 +436,14 @@ subtitle_anova_nonparametric <- function(data,
         conf.low = lower.ci,
         conf.high = upper.ci
       )
+
+    # text for effect size
+    effsize.text <- quote(epsilon^2)
   }
 
   # message about effect size measure
   if (isTRUE(messages)) {
     effsize_ci_message(nboot = nboot, conf.level = conf.level)
-  }
-
-  # choosing the appropriate effect size text
-  if (isTRUE(paired)) {
-    effsize.text <- quote(italic("W")["Kendall"])
-  } else {
-    effsize.text <- quote(epsilon^2)
   }
 
   # preparing subtitle
@@ -549,11 +537,7 @@ subtitle_anova_robust <- function(data,
 
   # creating a dataframe
   data <-
-    dplyr::select(
-      .data = data,
-      x = !!rlang::enquo(x),
-      y = !!rlang::enquo(y)
-    ) %>%
+    dplyr::select(.data = data, x = {{ x }}, y = {{ y }}) %>%
     dplyr::mutate(.data = ., x = droplevels(as.factor(x))) %>%
     tibble::as_tibble(x = .)
 
@@ -716,40 +700,35 @@ subtitle_anova_bayes <- function(data,
                                  ...) {
 
   # creating a dataframe
-  data <-
-    dplyr::select(
-      .data = data,
-      x = !!rlang::enquo(x),
-      y = !!rlang::enquo(y)
-    ) %>%
-    dplyr::mutate(.data = ., x = droplevels(as.factor(x))) %>%
+  data %<>%
+    dplyr::select(.data = ., {{ x }}, {{ y }}) %>%
+    dplyr::mutate(.data = ., {{ x }} := droplevels(as.factor({{ x }}))) %>%
     tibble::as_tibble(x = .)
 
   # properly removing NAs if it's a paired design
   if (isTRUE(paired)) {
     # converting to long format and then getting it back in wide so that the
     # rowid variable can be used as the block variable
-    data_within <-
+    data %<>%
       long_to_wide_converter(
-        data = data,
-        x = x,
-        y = y
+        data = .,
+        x = {{ x }},
+        y = {{ y }}
       ) %>%
       tidyr::gather(data = ., key, value, -rowid) %>%
-      dplyr::arrange(.data = ., rowid)
+      dplyr::arrange(.data = ., rowid) %>%
+      dplyr::rename(.data = ., {{ x }} := key, {{ y }} := value)
   } else {
-
     # remove NAs listwise for between-subjects design
-    data %<>%
-      tidyr::drop_na(data = .)
+    data %<>% tidyr::drop_na(data = .)
   }
 
   # bayes factor results
   subtitle <-
     bf_oneway_anova(
       data = data,
-      x = x,
-      y = y,
+      x = {{ x }},
+      y = {{ y }},
       paired = paired,
       bf.prior = bf.prior,
       k = k,

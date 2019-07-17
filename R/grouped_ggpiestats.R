@@ -24,6 +24,7 @@
 #'
 #' @examples
 #'
+#' \donttest{
 #' # grouped one-sample proportion tests
 #' ggstatsplot::grouped_ggpiestats(
 #'   data = mtcars,
@@ -42,7 +43,6 @@
 #' )
 #'
 #' # the following will take slightly more amount of time
-#' \donttest{
 #' # for reproducibility
 #' set.seed(123)
 #'
@@ -150,18 +150,16 @@ grouped_ggpiestats <- function(data,
 
   # creating a dataframe
   df <-
+    data %>%
     dplyr::select(
-      .data = data,
-      !!rlang::enquo(grouping.var),
-      !!rlang::enquo(main),
-      !!rlang::enquo(condition),
-      !!rlang::enquo(counts)
+      .data = .,
+      {{ grouping.var }},
+      {{ main }},
+      {{ condition }},
+      {{ counts }}
     ) %>%
-    tidyr::drop_na(data = .)
-
-  # creating a list for grouped analysis
-  df %<>%
-    grouped_list(data = ., grouping.var = !!rlang::enquo(grouping.var))
+    tidyr::drop_na(data = .) %>% # creating a list for grouped analysis
+    grouped_list(data = ., grouping.var = {{ grouping.var }})
 
   # ============== build pmap list based on conditions =====================
 

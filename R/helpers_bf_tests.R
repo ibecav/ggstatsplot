@@ -42,16 +42,6 @@ bf_extractor <- function(bf.object,
       log_e_bf01 = log(bf01),
       log_10_bf10 = log10(bf10),
       log_10_bf01 = log10(bf01)
-    ) %>%
-    dplyr::select(
-      .data = .,
-      bf10,
-      log_e_bf10,
-      log_10_bf10,
-      bf01,
-      log_e_bf01,
-      log_10_bf01,
-      dplyr::everything()
     )
 
   # return the dataframe with bayes factors
@@ -133,7 +123,7 @@ bf_caption_maker <- function(bf.df,
             ") = ",
             bf,
             ", ",
-            italic("r")["Cauchy"],
+            italic("r")["Cauchy"]^"JZS",
             " = ",
             bf_prior
           )
@@ -162,6 +152,7 @@ bf_caption_maker <- function(bf.df,
 #'   to use in calculating Bayes factors.
 #'
 #' @importFrom BayesFactor correlationBF
+#' @importFrom dplyr pull
 #'
 #' @seealso \code{\link{bf_contingency_tab}}, \code{\link{bf_oneway_anova}},
 #' \code{\link{bf_ttest}}
@@ -202,12 +193,8 @@ bf_corr_test <- function(data,
   # ============================ data preparation ==========================
 
   # creating a dataframe
-  data <-
-    dplyr::select(
-      .data = data,
-      x = !!rlang::enquo(x),
-      y = !!rlang::enquo(y)
-    ) %>%
+  data %<>%
+    dplyr::select(.data = ., {{ x }}, {{ y }}) %>%
     tidyr::drop_na(data = .) %>%
     tibble::as_tibble(.)
 
@@ -217,8 +204,8 @@ bf_corr_test <- function(data,
   bf_results <-
     bf_extractor(
       BayesFactor::correlationBF(
-        x = data$x,
-        y = data$y,
+        x = data %>% dplyr::pull({{ x }}),
+        y = data %>% dplyr::pull({{ y }}),
         nullInterval = NULL,
         rscale = bf.prior,
         ...
@@ -339,12 +326,12 @@ bf_contingency_tab <- function(data,
   # =============================== dataframe ================================
 
   # creating a dataframe
-  data <-
+  data %<>%
     dplyr::select(
-      .data = data,
-      main = !!rlang::enquo(main),
-      condition = !!rlang::enquo(condition),
-      counts = !!rlang::enquo(counts)
+      .data = .,
+      main = {{ main }},
+      condition = {{ condition }},
+      counts = {{ counts }}
     ) %>%
     tidyr::drop_na(data = .) %>%
     tibble::as_tibble(x = .)
@@ -440,7 +427,8 @@ bf_contingency_tab <- function(data,
     bf_10 <- exp(pr_y_h1 - pr_y_h0)
 
     # dataframe with results
-    bf_results <- tibble::enframe(bf_10) %>%
+    bf_results <-
+      tibble::enframe(bf_10) %>%
       dplyr::select(.data = ., bf10 = value) %>%
       dplyr::mutate(
         .data = .,
@@ -450,20 +438,7 @@ bf_contingency_tab <- function(data,
         log_10_bf10 = log10(bf10),
         log_10_bf01 = log10(bf01)
       ) %>%
-      dplyr::select(
-        .data = .,
-        bf10,
-        log_e_bf10,
-        log_10_bf10,
-        bf01,
-        log_e_bf01,
-        log_10_bf01,
-        dplyr::everything()
-      ) %>%
-      dplyr::mutate(
-        .data = .,
-        prior.concentration = prior.concentration
-      )
+      dplyr::mutate(.data = ., prior.concentration = prior.concentration)
   }
 
   # changing aspects of the caption based on what output is needed
@@ -656,8 +631,7 @@ bf_ttest <- function(data,
     if (!isTRUE(paired)) {
 
       # removing NAs
-      data %<>%
-        stats::na.omit(.)
+      data %<>% tidyr::drop_na(.)
 
       # extracting results from bayesian test and creating a dataframe
       bf_object <-
@@ -704,7 +678,8 @@ bf_ttest <- function(data,
   }
 
   # extracting the Bayes factors
-  bf_results <- bf_extractor(bf.object = bf_object) %>%
+  bf_results <-
+    bf_extractor(bf.object = bf_object) %>%
     dplyr::mutate(.data = ., bf.prior = bf.prior)
 
   # prepare the Bayes factor message
@@ -803,7 +778,7 @@ bf_oneway_anova <- function(data,
   if (isTRUE(paired)) {
     # converting to long format and then getting it back in wide so that the
     # rowid variable can be used as the block variable
-    data <-
+    df <-
       long_to_wide_converter(
         data = data,
         x = x,
@@ -817,7 +792,7 @@ bf_oneway_anova <- function(data,
     bf_results <-
       bf_extractor(BayesFactor::anovaBF(
         value ~ key + rowid,
-        data = as.data.frame(data),
+        data = as.data.frame(df),
         whichRandom = "rowid",
         rscaleFixed = bf.prior,
         progress = FALSE,
@@ -826,17 +801,15 @@ bf_oneway_anova <- function(data,
       )) %>%
       dplyr::mutate(.data = ., bf.prior = bf.prior)
   } else {
-
     # remove NAs listwise for between-subjects design
-    data %<>%
-      tidyr::drop_na(data = .)
+    df <- tidyr::drop_na(data = data)
 
     # extracting results from bayesian test and creating a dataframe
     bf_results <-
       bf_extractor(
         BayesFactor::anovaBF(
           formula = y ~ x,
-          data = as.data.frame(data),
+          data = as.data.frame(df),
           rscaleFixed = bf.prior,
           progress = FALSE,
           ...

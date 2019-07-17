@@ -44,7 +44,7 @@
 #'
 #' @import ggplot2
 #'
-#' @importFrom dplyr select group_by summarize n mutate mutate_at mutate_if near
+#' @importFrom dplyr select group_by summarize n mutate mutate_at mutate_if
 #' @importFrom rlang !! enquo quo_name as_name ensym
 #' @importFrom crayon green blue yellow red
 #' @importFrom paletteer scale_fill_paletteer_d
@@ -77,6 +77,7 @@
 #'   data = ggplot2::msleep,
 #'   main = vore,
 #'   perc.k = 1,
+#'   bf.message = FALSE,
 #'   k = 3
 #' )
 #'
@@ -160,19 +161,19 @@ ggpiestats <- function(data,
   # =============================== dataframe ================================
 
   # creating a dataframe
-  data <-
+  data %<>%
     dplyr::select(
-      .data = data,
-      main = !!rlang::enquo(main),
-      condition = !!rlang::enquo(condition),
-      counts = !!rlang::enquo(counts)
+      .data = .,
+      main = {{ main }},
+      condition = {{ condition }},
+      counts = {{ counts }}
     ) %>%
     tidyr::drop_na(data = .) %>%
     tibble::as_tibble(x = .)
 
   # =========================== converting counts ============================
 
-  # untable the dataframe based on the count for each obervation
+  # untable the dataframe based on the count for each observation
   if ("counts" %in% names(data)) {
     data %<>%
       tidyr::uncount(
@@ -402,7 +403,6 @@ ggpiestats <- function(data,
       caption = caption
     ) +
     ggplot2::guides(fill = ggplot2::guide_legend(title = legend.title)) +
-    # adding ggplot component
     ggplot.component
 
   # return the final plot

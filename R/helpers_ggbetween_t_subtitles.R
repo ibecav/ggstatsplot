@@ -23,15 +23,16 @@
 #'   are two possibilities implemented. If the *t*-test did not make a
 #'   homogeneity of variance assumption, (the Welch test), the variance term
 #'   will mirror the Welch test, otherwise a pooled and weighted estimate is
-#'   used. If a paired samples *t*-test was requested, then effect size desired is
-#'   based on the standard deviation of the differences.
+#'   used. If a paired samples *t*-test was requested, then effect size desired
+#'   is based on the standard deviation of the differences.
 #'
 #'   The computation of the confidence intervals defaults to a use of
 #'   non-central Student-*t* distributions (`effsize.noncentral = TRUE`);
 #'   otherwise a central distribution is used.
 #'
-#'   When computing confidence intervals the variance of the effect size *d* or *g* is
-#'   computed using the conversion formula reported in Cooper et al. (2009)
+#'   When computing confidence intervals the variance of the effect size *d* or
+#'   *g* is computed using the conversion formula reported in Cooper et al.
+#'   (2009)
 #'
 #'   - `((n1+n2)/(n1*n2) + .5*d^2/df) * ((n1+n2)/df)` (independent samples)
 #'
@@ -79,17 +80,13 @@ subtitle_t_parametric <- function(data,
 
   # creating a dataframe
   data <-
-    dplyr::select(
-      .data = data,
-      x = !!rlang::enquo(x),
-      y = !!rlang::enquo(y)
-    ) %>%
+    dplyr::select(.data = data, x = {{ x }}, y = {{ y }}) %>%
     dplyr::mutate_if(.tbl = ., .predicate = is.character, .funs = as.factor) %>%
     dplyr::mutate_if(.tbl = ., .predicate = is.factor, .funs = droplevels) %>%
     tibble::as_tibble(x = .)
 
   # properly removing NAs if it's a paired design
-  if (isTRUE(paired) && is.factor(data$x)) {
+  if (isTRUE(paired)) {
     data %<>%
       long_to_wide_converter(
         data = .,
@@ -108,8 +105,7 @@ subtitle_t_parametric <- function(data,
       dplyr::select(.data = ., -rowid)
   } else {
     # remove NAs listwise for between-subjects design
-    data %<>%
-      dplyr::filter(.data = ., !is.na(x), !is.na(y))
+    data %<>% tidyr::drop_na(data = .)
 
     # sample size
     sample_size <- nrow(data)
@@ -135,8 +131,7 @@ subtitle_t_parametric <- function(data,
   )
 
   # tidy dataframe from model object
-  stats_df <-
-    broomExtra::tidy(tobject)
+  stats_df <- broomExtra::tidy(tobject)
 
   # effect size object
   effsize_df <-
@@ -289,17 +284,13 @@ subtitle_mann_nonparametric <- function(data,
 
   # creating a dataframe
   data <-
-    dplyr::select(
-      .data = data,
-      x = !!rlang::enquo(x),
-      y = !!rlang::enquo(y)
-    ) %>%
+    dplyr::select(.data = data, x = {{ x }}, y = {{ y }}) %>%
     dplyr::mutate_if(.tbl = ., .predicate = is.character, .funs = as.factor) %>%
     dplyr::mutate_if(.tbl = ., .predicate = is.factor, .funs = droplevels) %>%
     tibble::as_tibble(x = .)
 
   # properly removing NAs if it's a paired design
-  if (isTRUE(paired) && is.factor(data$x)) {
+  if (isTRUE(paired)) {
     data %<>%
       long_to_wide_converter(
         data = .,
@@ -314,12 +305,10 @@ subtitle_mann_nonparametric <- function(data,
     sample_size <- length(unique(data$rowid))
 
     # removing the unnecessary `rowid` column
-    data %<>%
-      dplyr::select(.data = ., -rowid)
+    data %<>% dplyr::select(.data = ., -rowid)
   } else {
     # remove NAs listwise for between-subjects design
-    data %<>%
-      tidyr::drop_na(data = .)
+    data %<>% tidyr::drop_na(data = .)
 
     # sample size
     sample_size <- nrow(data)
@@ -342,8 +331,10 @@ subtitle_mann_nonparametric <- function(data,
   # function to compute effect sizes
   if (isTRUE(paired)) {
     .f <- rcompanion::wilcoxonPairedR
+    statistic.text <- quote("log"["e"](italic("V")))
   } else {
     .f <- rcompanion::wilcoxonR
+    statistic.text <- quote("log"["e"](italic("W")))
   }
 
   # computing effect size
@@ -363,13 +354,6 @@ subtitle_mann_nonparametric <- function(data,
   # message about effect size measure
   if (isTRUE(messages)) {
     effsize_ci_message(nboot = nboot, conf.level = conf.level)
-  }
-
-  # statistic text
-  if (isTRUE(paired)) {
-    statistic.text <- quote("log"["e"](italic("V")))
-  } else {
-    statistic.text <- quote("log"["e"](italic("W")))
   }
 
   # preparing subtitle
@@ -462,20 +446,9 @@ subtitle_t_robust <- function(data,
 
   # creating a dataframe
   data <-
-    dplyr::select(
-      .data = data,
-      x = !!rlang::enquo(x),
-      y = !!rlang::enquo(y)
-    ) %>%
+    dplyr::select(.data = data, x = {{ x }}, y = {{ y }}) %>%
     dplyr::mutate(.data = ., x = droplevels(as.factor(x))) %>%
     tibble::as_tibble(x = .)
-
-  # when paired robust t-test is run, `df` is going to be an integer
-  if (isTRUE(paired)) {
-    k.df <- 0
-  } else {
-    k.df <- k
-  }
 
   # ---------------------------- between-subjects design --------------------
 
@@ -483,8 +456,7 @@ subtitle_t_robust <- function(data,
   if (!isTRUE(paired)) {
 
     # removing NAs
-    data %<>%
-      stats::na.omit(.)
+    data %<>% tidyr::drop_na(.)
 
     # sample size
     sample_size <- nrow(data)
@@ -506,6 +478,8 @@ subtitle_t_robust <- function(data,
         nboot = nboot,
         alpha = 1 - conf.level
       )
+
+    k.df <- k
 
     # preparing subtitle
     subtitle <- subtitle_template(
@@ -553,6 +527,8 @@ subtitle_t_robust <- function(data,
         conf.level = conf.level,
         conf.type = conf.type
       )
+
+    k.df <- 0
 
     # preparing subtitle
     subtitle <- subtitle_template(
@@ -629,11 +605,7 @@ subtitle_t_bayes <- function(data,
 
   # creating a dataframe
   data <-
-    dplyr::select(
-      .data = data,
-      x = !!rlang::enquo(x),
-      y = !!rlang::enquo(y)
-    ) %>%
+    dplyr::select(.data = data, x = {{ x }}, y = {{ y }}) %>%
     dplyr::mutate(.data = ., x = droplevels(as.factor(x))) %>%
     tibble::as_tibble(.)
 

@@ -189,6 +189,7 @@ utils::globalVariables(
     "coef.type",
     "Value",
     "Statistic",
+    "statistic",
     "d.pmean",
     "d.pmean.LB",
     "d.pmean.UB",
@@ -199,7 +200,8 @@ utils::globalVariables(
     "upper.ci",
     "epsilon.squared",
     "condition",
-    "main"
+    "main",
+    "pair1"
   ),
   package = "ggstatsplot",
   add = FALSE

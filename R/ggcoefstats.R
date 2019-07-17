@@ -169,9 +169,9 @@
 #' @importFrom broomExtra tidy glance augment
 #' @importFrom dplyr select bind_rows summarize mutate mutate_at mutate_if n
 #' @importFrom dplyr group_by arrange full_join vars matches desc everything
-#' @importFrom dplyr vars all_vars filter_at starts_with
+#' @importFrom dplyr vars all_vars filter_at starts_with row_number
 #' @importFrom purrrlyr by_row
-#' @importFrom stats as.formula lm confint qnorm
+#' @importFrom stats as.formula lm confint qnorm p.adjust
 #' @importFrom ggrepel geom_label_repel
 #' @importFrom grid unit
 #' @importFrom sjstats p_value
@@ -320,11 +320,11 @@ ggcoefstats <- function(x,
                         component = "survival",
                         bf.message = TRUE,
                         d = "norm",
-                        d.par = c(0, 0.3),
+                        d.par = c(mean = 0, sd = 0.3),
                         tau = "halfcauchy",
-                        tau.par = 0.5,
-                        sample = 10000,
-                        summarize = "integrate",
+                        tau.par = c(scale = 0.5),
+                        iter = 5000,
+                        summarize = "stan",
                         p.kr = TRUE,
                         p.adjust.method = "none",
                         coefficient.type = c("beta", "location", "coefficient"),
@@ -393,6 +393,7 @@ ggcoefstats <- function(x,
   # dataframe objects
   df.mods <- c(
     "data.frame",
+    "data.table",
     "grouped_df",
     "tbl",
     "tbl_df",
@@ -422,15 +423,6 @@ ggcoefstats <- function(x,
       "stanreg",
       "TMB"
     )
-
-  # objects for which p-value needs to be computed using `sjstats` package
-  p.mods <- c(
-    "lmerMod",
-    "nlmerMod",
-    "polr",
-    "rlm",
-    "svyolr"
-  )
 
   # =================== types of models =====================================
 
@@ -528,7 +520,7 @@ ggcoefstats <- function(x,
     }
 
     # check that statistic is specified
-    if (purrr::is_null(statistic)) {
+    if (rlang::is_null(statistic)) {
       message(cat(
         crayon::red("Note"),
         crayon::blue(
@@ -616,7 +608,7 @@ ggcoefstats <- function(x,
   # create a new term column if it's not present
   if (!"term" %in% names(tidy_df)) {
     tidy_df %<>%
-      dplyr::mutate(.data = ., term = 1:nrow(.)) %>%
+      dplyr::mutate(.data = ., term = dplyr::row_number()) %>%
       dplyr::mutate(.data = ., term = as.character(term)) %>%
       dplyr::mutate(.data = ., term = paste("term", term, sep = "_"))
   }
@@ -648,7 +640,7 @@ ggcoefstats <- function(x,
   # =================== check for duplicate terms ============================
 
   # for some class of objects, there are going to be duplicate terms
-  # create a new column by collapsing orignal `variable` and `term` columns
+  # create a new column by collapsing original `variable` and `term` columns
   if (class(x)[[1]] %in% c("gmm", "lmodel2", "gamlss", "drc", "mlm")) {
     tidy_df %<>%
       tidyr::unite(
@@ -664,9 +656,7 @@ ggcoefstats <- function(x,
   if (any(duplicated(dplyr::select(tidy_df, term)))) {
     message(cat(
       crayon::red("Error: "),
-      crayon::blue(
-        "All elements in the column `term` should be unique.\n"
-      ),
+      crayon::blue("All elements in the column `term` should be unique.\n"),
       sep = ""
     ))
     return(invisible(tidy_df))
@@ -674,27 +664,32 @@ ggcoefstats <- function(x,
 
   # =================== p-value computation ==================================
 
-  # p-values won't be computed by default for the lmer models
-  if (class(x)[[1]] %in% p.mods) {
-    # computing p-values
-    tidy_df %<>%
-      dplyr::full_join(
-        x = dplyr::mutate_at(
-          .tbl = .,
-          .vars = "term",
-          .funs = ~ as.character(x = .)
-        ),
-        y = sjstats::p_value(fit = x, p.kr = p.kr) %>%
-          dplyr::select(.data = ., -std.error) %>%
-          dplyr::mutate_at(
+  # p-values won't be computed by default for some of the models
+  if (!"p.value" %in% names(tidy_df)) {
+    # use `sjstats` S3 methods to add them to the tidy dataframe
+    tryCatch(
+      expr = tidy_df %<>%
+        dplyr::full_join(
+          x = dplyr::mutate_at(
             .tbl = .,
             .vars = "term",
             .funs = ~ as.character(x = .)
           ),
-        by = "term"
-      ) %>%
-      dplyr::filter(.data = ., !is.na(estimate)) %>%
-      tibble::as_tibble(x = .)
+          y = sjstats::p_value(fit = x, p.kr = p.kr) %>%
+            dplyr::select(.data = ., -std.error) %>%
+            dplyr::mutate_at(
+              .tbl = .,
+              .vars = "term",
+              .funs = ~ as.character(x = .)
+            ),
+          by = "term"
+        ) %>%
+        dplyr::filter(.data = ., !is.na(estimate)) %>%
+        tibble::as_tibble(x = .),
+      error = function(e) {
+        tidy_df
+      }
+    )
   }
 
   # ================== statistic and p-value check ===========================
@@ -873,7 +868,7 @@ ggcoefstats <- function(x,
         output = "subtitle"
       )
 
-    # results from Bayesian random-effects meta-analysi
+    # results from Bayesian random-effects meta-analysis
     if (isTRUE(bf.message)) {
       caption <-
         bf_meta_message(
@@ -885,7 +880,7 @@ ggcoefstats <- function(x,
           d.par = d.par,
           tau = tau,
           tau.par = tau.par,
-          sample = sample,
+          iter = iter,
           summarize = summarize
         )
     }
@@ -993,8 +988,7 @@ ggcoefstats <- function(x,
 
       # logarithmic scale for exponent of coefficients
       if (isTRUE(exponentiate)) {
-        plot <- plot +
-          ggplot2::scale_x_log10()
+        plot <- plot + ggplot2::scale_x_log10()
       }
     }
 
